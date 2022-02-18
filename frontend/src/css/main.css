@@ -1,0 +1,138 @@
+:root {
+  --coffe: #b19b6b;
+  --coffe-dark: #74613a;
+  --coffe-light: #74613a;
+  --purple: #6c63ff;
+}
+
+html,
+body {
+  font-family: "Quicksand", sans-serif;
+}
+
+/* Animated label input */
+.formgroup__animated {
+  position: relative;
+  width: 100%;
+  height: 3rem;
+}
+
+.formgroup__animated input {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border: 1px solid #a8a8a8;
+  border-radius: 0.5rem;
+  outline: none;
+  padding: 1.25rem;
+  background: none;
+}
+.formgroup__animated textarea {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 8em;
+  border: 1px solid #eef1f6;
+  border-radius: 0.5rem;
+  outline: none;
+
+  background: none;
+}
+
+.formgroup__animated input:hover {
+  border-color: none;
+}
+
+.formgroup__animated input:focus {
+  border-color: var(--coffe);
+}
+
+.formgroup__animated label {
+  position: absolute;
+  left: 1rem;
+  top: 0.8rem;
+  padding: 0 0.5rem;
+  color: #6c757d;
+  cursor: text;
+  transition: top 200ms ease-in, left 200ms ease-in, font-size 200ms ease-in;
+  background-color: transparent;
+}
+
+.input__animated:not(:placeholder-shown) {
+  background-color: white;
+}
+.input__animated.invalid {
+  border-color: #fd0d85;
+}
+.input__animated.invalid:focus {
+  border-color: #fd0d85;
+}
+
+.input__animated:focus ~ .animated__label,
+.input__animated:not(:placeholder-shown).input__animated:not(:focus)
+  ~ .animated__label {
+  top: -0.5rem;
+  font-size: 0.9rem;
+  color: black;
+  background-color: white;
+  left: 0.8rem;
+}
+
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+  -webkit-box-shadow: 0 0 0 30px white inset !important;
+  box-shadow: 0 0 0 30px white inset !important;
+}
+/* Animated label input */
+
+.bg-coffee {
+  background-color: var(--coffe);
+}
+
+.btn.effect-resize {
+  width: 50%;
+  transition: width linear 0.2s;
+}
+.btn.effect-resize:hover {
+  width: 60%;
+}
+.btn-primary {
+  background-color: var(--coffe);
+  border: none;
+}
+.btn-primary:hover {
+  background-color: var(--coffe-dark);
+}
+.btn-primary:focus {
+  background-color: var(--coffe-dark);
+}
+
+.btn-primary:disabled {
+  background-color: var(--coffe);
+}
+
+.text-purple {
+  color: var(--purple);
+}
+
+.navbar-brand {
+  transition: all ease-in-out 0.2s;
+}
+
+.navbar-brand:hover {
+  transform: scale(1.2);
+  color: white;
+}
+
+.navbar-brand:hover span.text-purple {
+  color: white;
+}
+
+.navbar-brand:hover span.text-white {
+  color: var(--purple) !important;
+}

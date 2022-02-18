@@ -49,7 +49,6 @@ const Index = () => {
           </ul>
         ) : null}
       </div>
-      <div>xD</div>
     </div>
   );
 };

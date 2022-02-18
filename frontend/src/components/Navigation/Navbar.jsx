@@ -1,74 +1,72 @@
 import React from "react";
-const Navbar = ({ theme }) => {
-  const HandleNavTheme = () => {
-    if (!theme || theme === undefined || theme === "") {
-      return "navbar-light bg-light";
-    }
-    if (theme === "dark") {
-      return "navbar-dark bg-dark";
-    }
-    if (theme === "primary") {
-      return "navbar navbar-dark bg-primary";
-    }
-    if (theme === "secondary") {
-      return "navbar navbar-dark bg-secondary";
-    }
+import { Link, useNavigate } from "react-router-dom";
+import useSession from "../../hooks/useSession";
+import { LogOut } from "../../services/auth";
+const Navbar = () => {
+  const { user, setUser } = useSession();
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    LogOut();
+    setUser(null);
+    navigate("/login");
   };
   return (
-    <nav className={`navbar navbar-expand-lg ${HandleNavTheme()} `}>
+    <nav className={`navbar navbar-expand-lg navbar-dark py-3 bg-coffee`}>
       <div className="container-fluid">
-        <a className="navbar-brand">Navbar</a>
-        <button
-          className="navbar-toggler"
-          type="button"
-          data-bs-toggle="collapse"
-          data-bs-target="#navbarNavDropdown"
-          aria-controls="navbarNavDropdown"
-          aria-expanded="false"
-          aria-label="Toggle navigation"
+        <Link
+          data-bs-toggle="tooltip"
+          data-bs-placement="top"
+          title="Tooltip on top"
+          to={"/home"}
+          className="navbar-brand fw-bolder fs-4"
         >
-          <span className="navbar-toggler-icon" />
-        </button>
-        <div className="collapse navbar-collapse" id="navbarNavDropdown">
-          <ul className="navbar-nav">
-            <li className="nav-item">
-              <a className="nav-link active" aria-current="page">
-                Home
-              </a>
-            </li>
-            <li className="nav-item">
-              <a className="nav-link">Features</a>
-            </li>
-            <li className="nav-item">
-              <a className="nav-link">Pricing</a>
-            </li>
-            <li className="nav-item dropdown">
+          <span className="text-purple">B</span>
+          <span className="text-white">B</span>
+        </Link>
+
+        {user !== null ? (
+          <ul className="navbar-nav ms-auto">
+            <li className="nav-item dropdown ">
               <a
                 className="nav-link dropdown-toggle"
-                id="navbarDropdownMenuLink"
+                href="#"
+                id="navbarDropdown"
                 role="button"
                 data-bs-toggle="dropdown"
                 aria-expanded="false"
               >
-                Dropdown link
+                <span className="d-none d-sm-inline-block d-md-inline-block d-lg-inline-block d-xl-inline-block d-xxl-inline-block">
+                  {user.username}
+                </span>{" "}
+                <i className="fas fa-user"></i>
               </a>
               <ul
-                className="dropdown-menu"
-                aria-labelledby="navbarDropdownMenuLink"
+                className="dropdown-menu dropdown-menu-end rounded-3 shadow p-3 position-absolute"
+                aria-labelledby="navbarDropdown"
               >
                 <li>
-                  <a className="dropdown-item">Action</a>
+                  <a className="dropdown-item py-1  text-muted" href="#">
+                    <i className="fas fa-cog"></i> Profile
+                  </a>
+                </li>
+
+                <li>
+                  <hr className="dropdown-divider" />
                 </li>
                 <li>
-                  <a className="dropdown-item">Another action</a>
-                </li>
-                <li>
-                  <a className="dropdown-item">Something else here</a>
+                  <button
+                    onClick={handleLogout}
+                    className="dropdown-item text-black-50"
+                    href="#"
+                  >
+                    <i className="fas fa-sign-out-alt"></i> Log Out
+                  </button>
                 </li>
               </ul>
             </li>
           </ul>
-        </div>
+        ) : null}
       </div>
     </nav>
   );

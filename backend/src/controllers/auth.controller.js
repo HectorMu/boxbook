@@ -2,6 +2,7 @@ const connection = require("../database");
 const jwt = require("jsonwebtoken");
 const helpers = require("../helpers/helpers");
 const nodeMailer = require("../lib/nodemailer");
+const { validateEmail } = require("../helpers/helpers");
 const controller = {};
 
 controller.Login = async (req, res) => {
@@ -29,27 +30,23 @@ controller.Login = async (req, res) => {
         statusText: "Wrong credentials, check it out.",
       });
 
-    const serializedUser = {
+    const payload = {
       id: user.id,
       username: user.username,
-      firstname: user.firstname,
-      lastname: user.lastname,
+      fullname: user.fullname,
       email: user.email,
     };
 
-    const AccessToken = jwt.sign(
-      serializedUser,
-      process.env.ACCESS_TOKEN_SECRET
-    );
+    const AccessToken = jwt.sign(payload, process.env.ACCESS_TOKEN_SECRET);
 
     const SessionData = {
-      ...serializedUser,
+      ...payload,
       AccessToken,
     };
 
     res.status(200).json({
       status: true,
-      statusText: "User logged",
+      statusText: "Welcome",
       SessionData,
     });
   } catch (error) {
@@ -61,11 +58,10 @@ controller.Login = async (req, res) => {
 };
 
 controller.Signup = async (req, res) => {
-  const { username, firstname, lastname, email, password } = req.body;
   try {
     const results = await connection.query(
       `select * from users where email = ? `,
-      [email]
+      [req.body.email]
     );
     if (results.length > 0)
       return res.json({
@@ -74,17 +70,23 @@ controller.Signup = async (req, res) => {
           "An account is using this email already, try another email.",
       });
 
+    if (!validateEmail(req.body.email)) {
+      return res
+        .status(200)
+        .json({ status: false, statusText: "Provide a valid email" });
+    }
+
     const newUser = {
-      username,
-      firstname,
-      lastname,
-      email,
-      password,
+      ...req.body,
+      yearlyGoal: 0,
     };
 
     newUser.password = await helpers.encryptPassword(newUser.password);
     await connection.query("insert into users set ?", [newUser]);
-    res.status(200).json({ status: true, statusText: "userRegistered" });
+    res.status(200).json({
+      status: true,
+      statusText: "Registered, now Log in to continue!",
+    });
   } catch (error) {
     console.log(error);
     res

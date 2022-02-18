@@ -4,7 +4,7 @@ import useSession from "../../hooks/useSession";
 
 const IsAlreadyLogged = ({ view: View }) => {
   const { user } = useSession();
-  if (user !== null) return <Navigate to="/notes" replace={true} />;
+  if (user !== null) return <Navigate to="/home" replace={true} />;
   return <View />;
 };
 
