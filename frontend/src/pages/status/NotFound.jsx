@@ -8,7 +8,7 @@ const NotFound = () => {
       <div className="container pt-5">
         <div className="d-flex flex-column bg-coffe justify-content-center align-items-center ">
           <img src={image} className="img-fluid w-50 h-50" alt="" />
-          <h5 className="mt-3  fw-bold">
+          <h5 className="mt-3  fw-bold text-center">
             Oops... Nothing here!, you must{" "}
             <span className="text-purple">b</span>e reading!.{" "}
             <Link to={-1} className="text-purple">

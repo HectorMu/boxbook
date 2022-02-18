@@ -12,6 +12,7 @@ create table users (
     country varchar (50),
     city varchar (50),
     yearlyGoal int
+    booksReaded int,
 );
 
 create table friendship (

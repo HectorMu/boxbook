@@ -79,6 +79,7 @@ controller.Signup = async (req, res) => {
     const newUser = {
       ...req.body,
       yearlyGoal: 0,
+      booksReaded: 0,
     };
 
     newUser.password = await helpers.encryptPassword(newUser.password);

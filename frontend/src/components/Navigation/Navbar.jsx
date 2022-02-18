@@ -1,19 +1,42 @@
-import React from "react";
+import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import useSession from "../../hooks/useSession";
 import { LogOut } from "../../services/auth";
 import useSidebarControl from "../../hooks/useSidebarControl";
+import { getBooks } from "../../services/google.apis.books";
+import useServiceFetch from "../../hooks/useServiceFetch";
 
 const Navbar = () => {
   const { user, setUser } = useSession();
   const { setIsActive, isActive } = useSidebarControl();
   const navigate = useNavigate();
+  const [books, setBooks] = useState([]);
+  const [searchTitle, setSearchTitle] = useState("");
+  const { isLoading } = useServiceFetch(getBooks, setBooks);
+
+  const searchHandler = async (title) => {
+    console.log(title);
+    setSearchTitle(title);
+    if (searchTitle === "") {
+      setBooks([]);
+      return;
+    }
+
+    const fetchedBooks = await getBooks(title);
+    setBooks(fetchedBooks);
+  };
+
+  const handleResultsClose = () => {
+    setBooks([]);
+    setSearchTitle("");
+  };
 
   const handleLogout = () => {
     LogOut();
     setUser(null);
     navigate("/login");
   };
+
   return (
     <nav className={`navbar navbar-expand-lg navbar-dark py-3 bg-coffee`}>
       <div className="container-fluid">
@@ -31,6 +54,86 @@ const Navbar = () => {
 
           {user !== null ? (
             <div className="d-flex align-items-center">
+              <div className="position-relative me-3 me-lg-5 me-xxl-5">
+                <div className="input-group ">
+                  <button className="btn btn-purple">
+                    <i className=" fas fa-search"></i>
+                  </button>
+                  <input
+                    type="text"
+                    className="form-control"
+                    placeholder="Search books"
+                    onChange={(e) => searchHandler(e.target.value)}
+                    value={searchTitle}
+                  />
+                  {books && books.length > 0 ? (
+                    <ul
+                      style={{ top: "39px" }}
+                      className="list-group position-absolute w-100"
+                    >
+                      {books !== undefined && books.length > 0 ? (
+                        <div className="list-group-item text-decoration-none text-center d-flex justify-content-between align-items-center gap-3">
+                          <Link
+                            className="btn btn-sm btn-primary w-100"
+                            to={`books/results/${searchTitle}`}
+                          >
+                            All results
+                          </Link>
+                          <button
+                            onClick={handleResultsClose}
+                            className="btn btn-sm btn-purple w-50"
+                            to={`books/results/${searchTitle}`}
+                          >
+                            <i className="fas fa-times"></i>
+                          </button>
+                        </div>
+                      ) : null}
+
+                      {books.map((book, i) =>
+                        book !== undefined ? (
+                          i > 4 ? null : (
+                            <Link
+                              to={`/book/details/${book.title}`}
+                              className="list-group-item text-decoration-none"
+                              style={{ cursor: "pointer" }}
+                              key={book.title + book.publishedDate}
+                            >
+                              <div className="row">
+                                <div className="col-4">
+                                  <img
+                                    className="img-thumbnail img-fluid"
+                                    //style={{ width: "40px", height: "40px" }}
+                                    src={
+                                      book.imageLinks &&
+                                      book.imageLinks.smallThumbnail
+                                        ? book.imageLinks.smallThumbnail
+                                        : null
+                                    }
+                                    alt=""
+                                  />
+                                </div>
+                                <div className="col-8">
+                                  <div className="row">
+                                    <div className="col-12">
+                                      <small>{book.title}</small>
+                                    </div>
+                                    <div className="col-12 ">
+                                      <small className="fw-bold">
+                                        by {book.authors}
+                                      </small>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            </Link>
+                          )
+                        ) : null
+                      )}
+                    </ul>
+                  ) : null}
+                </div>
+              </div>
+
               <div className="dropdown">
                 <button
                   className="btn btn-sm text-white dropdown-toggle"

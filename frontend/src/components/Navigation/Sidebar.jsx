@@ -23,8 +23,8 @@ const Sidebar = () => {
           Home
         </NavLink>
         <hr className="text-white" />
-        <NavLink to="/books" className="menu-item">
-          My books
+        <NavLink to="/me/catalog" className="menu-item">
+          My catalog
         </NavLink>
         <NavLink to="/meet" className="menu-item">
           Meet people
