@@ -1,0 +1,28 @@
+GET http://localhost:4000/api/test
+
+###
+GET http://localhost:4000/api/listall
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJtYXNhZG9yYSIsImZpcnN0bmFtZSI6Ik1hc2Fkb3IiLCJsYXN0bmFtZSI6IlhEIiwiZW1haWwiOiJoZWN0b3JAZ21haWwuY29tIiwiaWF0IjoxNjQxNDE1NjgzfQ.eMJaLniMcuSFQB2y3n3BFBqCybycuPHstF9sYQ-AWKM
+
+###
+POST http://localhost:4000/api/login 
+Content-Type: application/json
+
+{
+    "email":"hector@gmail.com",
+    "password":"12345678"
+}
+
+###
+POST http://localhost:4000/api/signup 
+Content-Type: application/json
+
+{
+    "username":"masadora",
+    "firstname":"Masador",
+    "lastname":"XD",
+    "email":"hector@gmail.com",
+    "password":"12345678"
+}
+
+
