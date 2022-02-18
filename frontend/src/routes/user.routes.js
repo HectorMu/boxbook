@@ -1,4 +1,5 @@
 import Home from "../pages/User/Home";
+import Books from "../pages/User/Books";
 import IsLoggedIn from "../components/Authentication/IsLoggedIn";
 
 const Routes = {
@@ -13,6 +14,10 @@ const Routes = {
     {
       path: "/home",
       element: <IsLoggedIn view={Home} />,
+    },
+    {
+      path: "/books",
+      element: <IsLoggedIn view={Books} />,
     },
   ],
 };

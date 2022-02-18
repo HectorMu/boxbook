@@ -14,7 +14,7 @@ const verifiyToken = (req, res, next) => {
       process.env.ACCESS_TOKEN_SECRET
     );
     //Attach the access token to the request
-    req.AccessToken = decodedAccessToken;
+    req.user = decodedAccessToken;
 
     if (decodedAccessToken) next();
   } catch (error) {

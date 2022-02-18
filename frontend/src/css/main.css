@@ -3,6 +3,7 @@
   --coffe-dark: #74613a;
   --coffe-light: #74613a;
   --purple: #6c63ff;
+  --purple-light: #9590ff;
 }
 
 html,
@@ -120,6 +121,19 @@ input:-webkit-autofill:active {
   color: var(--purple);
 }
 
+.btn-purple {
+  background-color: var(--purple);
+  color: white;
+}
+.btn-purple:hover {
+  background-color: var(--purple-light);
+  color: white;
+}
+.btn-purple:focus {
+  background-color: var(--purple-light);
+  color: white;
+}
+
 .navbar-brand {
   transition: all ease-in-out 0.2s;
 }
@@ -135,4 +149,108 @@ input:-webkit-autofill:active {
 
 .navbar-brand:hover span.text-white {
   color: var(--purple) !important;
+}
+
+.wrapper {
+  display: flex;
+  min-height: 100vh;
+  flex-direction: row-reverse;
+}
+
+.sidebar {
+  flex: 1 1 0;
+  max-width: 300px;
+  padding: 2rem 1rem;
+  background-color: var(--coffe-dark);
+  z-index: 3;
+}
+
+.sidebar h3 {
+  color: white;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  margin-top: 10px;
+}
+
+.sidebar .menu {
+  margin: -0.5rem -1rem;
+  position: sticky;
+  top: 10px;
+}
+
+.sidebar .menu .menu-item {
+  display: block;
+  padding: 1em;
+  color: white;
+  text-decoration: none;
+  transition: 0.2s linear;
+}
+
+.sidebar .menu .menu-item:hover {
+  color: var(--coffe);
+  border-left: 5px solid var(--purple);
+}
+
+.sidebar .menu .menu-item.active {
+  border-left: 10px solid var(--purple);
+  pointer-events: none;
+}
+
+@media (min-width: 1200px) {
+  .sidebar {
+    max-width: 150px;
+  }
+}
+
+@media (max-width: 1024px) {
+  .sidebar {
+    max-width: 100px;
+  }
+}
+@media (max-width: 962px) {
+  .sidebar {
+    max-width: 100px;
+  }
+}
+
+@media (max-width: 768px) {
+  .sidebar {
+    position: fixed;
+    top: 0;
+    right: -400px;
+    height: 100vh;
+    width: 100%;
+    max-width: 200px;
+    transition: 0.2s linear;
+    z-index: 100;
+  }
+  .sidebar.active {
+    right: 0;
+  }
+  .sidebar .menu {
+    position: static;
+  }
+}
+
+@media (max-width: 576px) {
+  .sidebar {
+    position: fixed;
+    top: 0;
+    right: -400px;
+    height: 100vh;
+    width: 100%;
+    max-width: 200px;
+    transition: 0.2s linear;
+    z-index: 100;
+  }
+  .sidebar.active {
+    right: 0;
+  }
+  .sidebar .menu {
+    position: static;
+  }
+}
+
+.content {
+  flex: 1 1 0;
 }

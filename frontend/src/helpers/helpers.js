@@ -14,7 +14,34 @@ export const checkEmptyValue = (object) => {
 export const postConfig = (data) => {
   return {
     method: "post",
-    headers: { "Content-Type": "application/json" },
+    headers: {
+      "Content-Type": "application/json",
+    },
     body: JSON.stringify(data),
   };
+};
+
+export const authPostConfig = (data) => {
+  if (data) {
+    return {
+      method: "post",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: getAndSetAccessToken(),
+      },
+      body: JSON.stringify(data),
+    };
+  }
+  return {
+    method: "post",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: getAndSetAccessToken(),
+    },
+  };
+};
+
+export const getAndSetAccessToken = () => {
+  const user = JSON.parse(window.localStorage.getItem("BoxBookSession"));
+  return `Bearer ${user.AccessToken}`;
 };

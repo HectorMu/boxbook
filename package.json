@@ -1,16 +1,16 @@
 {
   "name": "boxbook",
-  "private":true,
+  "private": true,
   "version": "1.0.0",
   "description": "",
-  "workspaces":[
+  "workspaces": [
     "backend",
     "frontend"
   ],
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build:app":"npm run build --workspace=frontend",
+    "build:app": "npm run build --workspace=frontend",
     "start:app": "npm start --workspace=frontend",
     "start:api": "npm run dev --workspace=backend",
     "dev": "start npm run start:api && start npm run start:app",
@@ -18,5 +18,8 @@
   },
   "keywords": [],
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "bootstrap": "^5.1.3"
+  }
 }
