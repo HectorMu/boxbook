@@ -260,7 +260,7 @@ input:-webkit-autofill:active {
 }
 
 .btn-star {
-  color: rgb(255, 255, 255);
+  color: rgb(172, 172, 172);
 }
 .btn-star:hover {
   color: rgb(255, 255, 255);
@@ -280,11 +280,11 @@ input:-webkit-autofill:active {
   box-shadow: none;
 }
 .responsive-font {
-  font-size: 60px !important;
+  font-size: 20px !important;
 }
 
 @media (max-width: 576px) {
   .responsive-font {
-    font-size: 35px !important;
+    font-size: 20px !important;
   }
 }
