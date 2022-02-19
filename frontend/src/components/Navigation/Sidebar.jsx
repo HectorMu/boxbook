@@ -7,8 +7,7 @@ const Sidebar = () => {
 
   return (
     <aside className={`sidebar ${isActive ? `active` : ``} `}>
-      <div className="d-flex justify-content-between">
-        <h3 className="text-center fs-6">Menu</h3>
+      <div className="d-flex justify-content-end">
         <button
           onClick={() => setIsActive(!isActive)}
           className="btn btn-sm btn-purple d-block d-sm-block d-md-none d-lg-none d-xl-none d-xxl-none"
@@ -16,8 +15,6 @@ const Sidebar = () => {
           <i className="fas fa-times"></i>
         </button>
       </div>
-
-      <hr className="text-white" />
       <nav className="menu">
         <NavLink to="/home" className="menu-item">
           Home

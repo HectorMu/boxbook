@@ -5,6 +5,7 @@ import { LogOut } from "../../services/auth";
 import useSidebarControl from "../../hooks/useSidebarControl";
 import { getBooks } from "../../services/google.apis.books";
 import useServiceFetch from "../../hooks/useServiceFetch";
+import Loading from "../Global/Loading";
 
 const Navbar = () => {
   const { user, setUser } = useSession();
@@ -12,18 +13,18 @@ const Navbar = () => {
   const navigate = useNavigate();
   const [books, setBooks] = useState([]);
   const [searchTitle, setSearchTitle] = useState("");
-  const { isLoading } = useServiceFetch(getBooks, setBooks);
+  const [IsLoading, setIsLoading] = useState(false);
 
   const searchHandler = async (title) => {
-    console.log(title);
     setSearchTitle(title);
     if (searchTitle === "") {
       setBooks([]);
       return;
     }
-
+    setIsLoading(true);
     const fetchedBooks = await getBooks(title);
     setBooks(fetchedBooks);
+    setIsLoading(false);
   };
 
   const handleResultsClose = () => {
@@ -64,11 +65,22 @@ const Navbar = () => {
                     className="form-control"
                     placeholder="Search books"
                     onChange={(e) => searchHandler(e.target.value)}
+                    onFocus={(e) => searchHandler(e.target.value)}
                     value={searchTitle}
                   />
+
+                  {IsLoading ? (
+                    <div
+                      className="position-absolute"
+                      style={{ zIndex: 10, right: "10px", top: "10px" }}
+                    >
+                      <Loading small text="purple" />
+                    </div>
+                  ) : null}
+
                   {books && books.length > 0 ? (
                     <ul
-                      style={{ top: "39px" }}
+                      style={{ top: "39px", zIndex: 20 }}
                       className="list-group position-absolute w-100"
                     >
                       {books !== undefined && books.length > 0 ? (
@@ -82,7 +94,6 @@ const Navbar = () => {
                           <button
                             onClick={handleResultsClose}
                             className="btn btn-sm btn-purple w-50"
-                            to={`books/results/${searchTitle}`}
                           >
                             <i className="fas fa-times"></i>
                           </button>
@@ -93,7 +104,9 @@ const Navbar = () => {
                         book !== undefined ? (
                           i > 4 ? null : (
                             <Link
-                              to={`/book/details/${book.title}`}
+                              to={`/books/details/${book.title}`}
+                              onClick={() => setBooks([])}
+                              state={book}
                               className="list-group-item text-decoration-none"
                               style={{ cursor: "pointer" }}
                               key={book.title + book.publishedDate}

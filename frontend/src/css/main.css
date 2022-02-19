@@ -254,3 +254,37 @@ input:-webkit-autofill:active {
 .content {
   flex: 1 1 0;
 }
+
+.border-coffee {
+  border: 2px solid var(--coffee);
+}
+
+.btn-star {
+  color: rgb(255, 255, 255);
+}
+.btn-star:hover {
+  color: rgb(255, 255, 255);
+  transition: all linear 0.3s;
+}
+
+.text-purple-light {
+  color: var(--purple-light) !important;
+  transform: scale(1.2);
+}
+
+.btn-star.rated {
+  color: var(--purple);
+}
+
+.btn-star:focus {
+  box-shadow: none;
+}
+.responsive-font {
+  font-size: 60px !important;
+}
+
+@media (max-width: 576px) {
+  .responsive-font {
+    font-size: 35px !important;
+  }
+}
