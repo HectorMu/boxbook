@@ -6,6 +6,17 @@ const controller = require("../controllers/userbooks.controller");
 
 router.get("/api/user/books/listall", verifyToken, controller.ListAll);
 router.post("/api/user/books/save", verifyToken, controller.Save);
+router.post(
+  "/api/user/catalog/book/check",
+  verifyToken,
+  controller.checkIfAlreadyInUserCatalog
+);
+router.post(
+  "/api/user/catalog/book/remove",
+  verifyToken,
+  controller.removeBookFromCatalog
+);
+
 router.delete("/api/user/books/delete/:id", verifyToken, controller.Delete);
 router.put("/api/user/books/update/:id", verifyToken, controller.Update);
 

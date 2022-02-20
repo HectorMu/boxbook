@@ -18,6 +18,7 @@ const LoginForm = () => {
 
   const handleSignUp = async (e) => {
     e.preventDefault();
+    const tLoading = toast.loading("Validating...");
     const loginResults = await LogIn(credentials);
     if (!loginResults.status) {
       return toast.error(loginResults.statusText);
@@ -29,10 +30,12 @@ const LoginForm = () => {
     );
 
     setUser(JSON.parse(window.localStorage.getItem("BoxBookSession")));
-    toast.success(`Welcome back ${loginResults.SessionData.username}`);
+    toast.success(`Welcome back ${loginResults.SessionData.username}`, {
+      id: tLoading,
+    });
+
     navigate("/home");
     const hasYearlyGoal = await checkYearlyGoal();
-    console.log(hasYearlyGoal);
     if (!hasYearlyGoal.status && hasYearlyGoal.statusText === "NotSetted") {
       const { value: settedGoal } = await Swal.fire({
         title: "You dont have a yearly goal setted!, set it now",

@@ -6,7 +6,7 @@ import { addBookToCatalog } from "../../../services/books";
 
 const rateStars = [1, 2, 3, 4, 5];
 
-const AddToCatalog = ({ book = null }) => {
+const AddToCatalog = ({ book = null, refresh }) => {
   const [bookToAdd, setBookToAdd] = useState(bookModel);
   const [onRating, setOnRating] = useState(0);
   const [rated, setRated] = useState(0);
@@ -26,12 +26,16 @@ const AddToCatalog = ({ book = null }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    const tLoading = toast.loading("Adding...");
     const results = await addBookToCatalog(bookToAdd);
     if (!results.status) {
       return toast.error("Something wen't wrong");
     }
 
-    toast.success("Book added to catalog");
+    toast.success(`Book added to catalog`, {
+      id: tLoading,
+    });
+    refresh();
   };
   useEffect(() => {
     setBookToAdd({
