@@ -18,6 +18,7 @@ app.use(express.json());
 app.use(require("./routes/template.routes"));
 app.use(require("./routes/auth.routes"));
 app.use(require("./routes/user.routes"));
+app.use(require("./routes/userbooks.routes"));
 
 //To deploy a react router app build with an express server, this must be here forever
 app.use(express.static(path.join(__dirname, "build")));

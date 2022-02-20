@@ -16,6 +16,7 @@ export const getBooks = async (q) => {
       publisher,
       publishedDate,
       description,
+      categories,
     }) => ({
       title,
       authors,
@@ -24,6 +25,7 @@ export const getBooks = async (q) => {
       publisher,
       publishedDate,
       description,
+      categories,
     })
   );
 
