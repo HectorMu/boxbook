@@ -26,6 +26,9 @@ const AddToCatalog = ({ book = null, refresh }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    if (bookToAdd.status === "Pending" || bookToAdd.status === "Reading") {
+      handleChange("score", 0);
+    }
     const tLoading = toast.loading("Adding...");
     const results = await addBookToCatalog(bookToAdd);
     if (!results.status) {
@@ -93,44 +96,66 @@ const AddToCatalog = ({ book = null, refresh }) => {
             <p>Released: {book.publishedDate}</p>
           </div>
         </div>
-        <h5 className="text-center pt-3">Rate this book</h5>
-        <div className="d-flex justify-content-center ">
-          {rateStars.map((el, i) => (
-            <button
-              type="button"
-              key={el}
-              onMouseOver={() => setOnRating(i + 1)}
-              onMouseLeave={() => setOnRating(rated)}
-              onClick={() => ratingHandlers(i)}
-              className={`btn btn-sm btn-star ${
-                rated >= i + 1
-                  ? `rated`
-                  : `${onRating >= i + 1 ? `text-purple-light` : ""} `
-              } `}
-            >
-              <i className="fas fa-star responsive-font"></i>
-            </button>
-          ))}
-        </div>
-        <div className="d-flex justify-content-center mt-2">
-          <button
-            type="button"
-            onClick={cleanRatingHandlers}
-            disabled={rated !== 0 ? false : true}
-            className="btn btn-purple btn-sm"
-          >
-            Clear rate
-          </button>
-        </div>
+
+        {bookToAdd.status === "Pending" ||
+        bookToAdd.status === "Reading" ? null : (
+          <div id="rateSection">
+            <h5 className="text-center pt-3">Rate this book</h5>
+            <div className="d-flex justify-content-center ">
+              {rateStars.map((el, i) => (
+                <button
+                  type="button"
+                  key={el}
+                  onMouseOver={() => setOnRating(i + 1)}
+                  onMouseLeave={() => setOnRating(rated)}
+                  onClick={() => ratingHandlers(i)}
+                  className={`btn btn-sm btn-star ${
+                    rated >= i + 1
+                      ? `rated`
+                      : `${onRating >= i + 1 ? `text-purple-light` : ""} `
+                  } `}
+                >
+                  <i className="fas fa-star responsive-font"></i>
+                </button>
+              ))}
+            </div>
+            <div className="d-flex justify-content-center mt-2">
+              <button
+                type="button"
+                onClick={cleanRatingHandlers}
+                disabled={rated !== 0 ? false : true}
+                className="btn btn-purple btn-sm"
+              >
+                Clear rate
+              </button>
+            </div>
+          </div>
+        )}
+
         <div className="mt-2">
-          <textarea
-            className="form-control"
-            rows="5"
-            onChange={(e) => handleChange("review", e.target.value)}
-            placeholder="Write your review"
-            value={bookToAdd.review}
-            required
-          ></textarea>
+          {bookToAdd.status === "Pending" ||
+          bookToAdd.status === "Reading" ? null : (
+            <textarea
+              className="form-control"
+              rows="5"
+              onChange={(e) => handleChange("review", e.target.value)}
+              placeholder="Write your review"
+              value={bookToAdd.review}
+              required
+            ></textarea>
+          )}
+          {bookToAdd.status === "Reading" ? (
+            <input
+              placeholder="Advance page number"
+              className="form-control mb-2 mt-3"
+              onChange={(e) =>
+                handleChange("pagesReaded", parseInt(e.target.value))
+              }
+              value={bookToAdd.pagesReaded}
+              type={"number"}
+            />
+          ) : null}
+
           <div className="d-flex justify-content-center mt-1">
             <button type="submit" className="btn btn-sm btn-purple">
               Save

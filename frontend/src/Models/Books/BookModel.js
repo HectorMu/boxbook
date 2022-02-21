@@ -8,6 +8,7 @@ const bookModel = {
   status: "Pending",
   score: 0,
   review: "",
+  pagesReaded: 0,
 };
 
 export default bookModel;

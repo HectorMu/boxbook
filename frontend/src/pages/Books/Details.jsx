@@ -8,7 +8,7 @@ import BookInCatalog from "../../containers/Books/Details/BookInCatalog";
 
 const catalogData = {
   inCatalog: false,
-  score: 0,
+  book: {},
 };
 
 const Details = () => {
@@ -30,14 +30,14 @@ const Details = () => {
       setOnUserCatalog({
         ...onUserCatalog,
         inCatalog: true,
-        score: results.score,
+        book: results.book,
       });
       return;
     }
     setOnUserCatalog({
       ...onUserCatalog,
       inCatalog: false,
-      score: 0,
+      book: {},
     });
   }, [book, onUserCatalog.inCatalog]);
 
@@ -55,10 +55,7 @@ const Details = () => {
     <div className="container py-3">
       <div className="d-flex justify-content-center justify-content-lg-end  mb-2">
         {onUserCatalog.inCatalog ? (
-          <BookInCatalog
-            score={onUserCatalog.score}
-            refresh={getBookFromFetch}
-          />
+          <BookInCatalog book={onUserCatalog.book} refresh={getBookFromFetch} />
         ) : (
           <AddToCatalog book={book} refresh={getBookFromFetch} />
         )}
