@@ -17,6 +17,12 @@ router.post(
   controller.removeBookFromCatalog
 );
 
+router.get(
+  "/api/user/books/getadvance/:id",
+  verifyToken,
+  controller.getBookAdvance
+);
+
 router.delete("/api/user/books/delete/:id", verifyToken, controller.Delete);
 router.put("/api/user/books/update/:id", verifyToken, controller.Update);
 

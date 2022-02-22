@@ -26,20 +26,24 @@ const AddToCatalog = ({ book = null, refresh }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (bookToAdd.status === "Pending" || bookToAdd.status === "Reading") {
-      handleChange("score", 0);
-    }
     const tLoading = toast.loading("Adding...");
     const results = await addBookToCatalog(bookToAdd);
+    console.log(results);
     if (!results.status) {
-      return toast.error("Something wen't wrong");
+      return toast.error(results.statusText, { id: tLoading });
     }
+    refresh();
 
     toast.success(`Book added to catalog`, {
       id: tLoading,
     });
-    refresh();
   };
+
+  useEffect(() => {
+    if (bookToAdd.status === "Pending" || bookToAdd.status === "Reading") {
+      setBookToAdd({ ...bookToAdd, score: 0, review: "" });
+    }
+  }, [bookToAdd.status]);
   useEffect(() => {
     setBookToAdd({
       ...bookToAdd,

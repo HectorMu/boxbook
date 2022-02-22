@@ -1,5 +1,5 @@
 import API from "../config/API";
-import { authPostConfig } from "../helpers/helpers";
+import { authPostConfig, authGetConfig } from "../helpers/helpers";
 
 export const addBookToCatalog = async (book) => {
   try {
@@ -30,6 +30,18 @@ export const removeBookFromCatalog = async (title) => {
     const response = await fetch(
       `${API}/user/catalog/book/remove`,
       authPostConfig({ title })
+    );
+    return await response.json();
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const getBookAdvance = async (id) => {
+  try {
+    const response = await fetch(
+      `${API}/user/books/getadvance/${id}`,
+      authGetConfig()
     );
     return await response.json();
   } catch (error) {

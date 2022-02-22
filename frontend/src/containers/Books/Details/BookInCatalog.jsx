@@ -1,17 +1,27 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import toast from "react-hot-toast";
 import { useParams } from "react-router-dom";
-import { removeBookFromCatalog } from "../../../services/books";
+import { getBookAdvance, removeBookFromCatalog } from "../../../services/books";
 const rateStars = [1, 2, 3, 4, 5];
 
 const BookInCatalog = ({ book, refresh }) => {
   const [onRating, setOnRating] = useState(0);
+  const [bookAdvance, setBookAdvance] = useState(0);
   const [rated, setRated] = useState(0);
   const { title } = useParams();
 
   const ratingHandlers = (i) => {
     setRated(i + 1);
   };
+
+  const getCurrentAdvance = useCallback(async () => {
+    console.log(book.id);
+
+    const results = await getBookAdvance(book.id);
+    if (results.status) {
+      setBookAdvance(results.bookAdvance.pagesReaded);
+    }
+  }, [book.id]);
 
   const removeHandler = async () => {
     const tLoading = toast.loading("Removing..");
@@ -25,16 +35,18 @@ const BookInCatalog = ({ book, refresh }) => {
     refresh();
   };
   useEffect(() => {
+    getCurrentAdvance();
     if (book.score !== 0) {
       setRated(book.score);
     }
-  }, [book.score]);
+  }, [book.score, getCurrentAdvance]);
 
-  console.log(book);
   return (
     <div className="d-flex">
       {book.status === "Reading" ? (
-        <h5 className="me-3">40/{book.pageCount}</h5>
+        <h5 className="me-3">
+          {bookAdvance}/{book.pageCount}
+        </h5>
       ) : null}
       {book.status !== "Read" ? null : (
         <>

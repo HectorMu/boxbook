@@ -41,6 +41,16 @@ export const authPostConfig = (data) => {
   };
 };
 
+export const authGetConfig = () => {
+  return {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: getAndSetAccessToken(),
+    },
+  };
+};
+
 export const getAndSetAccessToken = () => {
   const user = JSON.parse(window.localStorage.getItem("BoxBookSession"));
   return `Bearer ${user.AccessToken}`;

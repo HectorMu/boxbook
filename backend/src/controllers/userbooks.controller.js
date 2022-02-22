@@ -11,7 +11,7 @@ controller.Save = async (req, res) => {
     fk_user: req.user.id,
   };
 
-  console.log(book.pagesReaded);
+  console.log(book);
 
   try {
     if (book.pagesReaded === 0) {
@@ -24,6 +24,14 @@ controller.Save = async (req, res) => {
 
     if (book.pagesReaded > 0) {
       const pages = book.pagesReaded;
+
+      if (pages > book.pageCount) {
+        return res.json({
+          status: false,
+          statusText: "This book not have that number of pages",
+        });
+      }
+
       delete book.pagesReaded;
       await connection.query("insert into userbooks set ?", [book]);
       const getBook = await connection.query(
@@ -37,9 +45,32 @@ controller.Save = async (req, res) => {
         pagesReaded: pages,
         commentary: "",
       };
+
       await connection.query("insert into userbooksadvance set ?", [advance]);
     }
     res.status(200).json({ status: true, statusText: "Book added to catalog" });
+  } catch (error) {
+    console.log(error);
+    res.json({
+      status: false,
+      statusText: "Something wen't wrong, try again later",
+    });
+  }
+};
+
+controller.getBookAdvance = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const results = await connection.query(
+      "select * from userbooksadvance where fk_user = ? && fk_book = ?",
+      [req.user.id, id]
+    );
+
+    if (!results.length > 0) {
+      return res.json({ status: false, bookAdvance: "Not advance" });
+    }
+    res.json({ status: true, bookAdvance: results[0] });
   } catch (error) {
     console.log(error);
     res.json({
