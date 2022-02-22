@@ -3,15 +3,19 @@ const jwt = require("jsonwebtoken");
 
 const controller = {};
 
-controller.ListAll = async (req, res) => {};
+controller.ListAll = async (req, res) => {
+  const books = await connection.query(
+    "select * from userbooks where fk_user = ?",
+    [req.user.id]
+  );
+  res.json(books);
+};
 
 controller.Save = async (req, res) => {
   const book = {
     ...req.body,
     fk_user: req.user.id,
   };
-
-  console.log(book);
 
   try {
     if (book.pagesReaded === 0) {
@@ -28,7 +32,7 @@ controller.Save = async (req, res) => {
       if (pages > book.pageCount) {
         return res.json({
           status: false,
-          statusText: "This book not have that number of pages",
+          statusText: "This book doesn't have that number of pages",
         });
       }
 

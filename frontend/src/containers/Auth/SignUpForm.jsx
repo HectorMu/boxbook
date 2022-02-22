@@ -75,7 +75,7 @@ const SignUpForm = () => {
   }, [getCitiesFromCountry]);
 
   return (
-    <form className="card shadow-lg" onSubmit={handleSignUp}>
+    <form className="" onSubmit={handleSignUp}>
       <div className="card-body">
         <div className="row">
           <div className="col-12 col-lg-6">

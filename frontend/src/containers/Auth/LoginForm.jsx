@@ -57,7 +57,7 @@ const LoginForm = () => {
   };
 
   return (
-    <form className="card shadow-lg py-2" onSubmit={handleSignUp}>
+    <form className=" py-2" onSubmit={handleSignUp}>
       <div className="card-body">
         <div className="row">
           <div className="col-12">

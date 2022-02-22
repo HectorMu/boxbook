@@ -43,7 +43,9 @@ const AddToCatalog = ({ book = null, refresh }) => {
     if (bookToAdd.status === "Pending" || bookToAdd.status === "Reading") {
       setBookToAdd({ ...bookToAdd, score: 0, review: "" });
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [bookToAdd.status]);
+
   useEffect(() => {
     setBookToAdd({
       ...bookToAdd,
@@ -57,7 +59,10 @@ const AddToCatalog = ({ book = null, refresh }) => {
           ? book.imageLinks.thumbnail
           : null,
     });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [book]);
+
+  console.log(book);
 
   return (
     <Canvas

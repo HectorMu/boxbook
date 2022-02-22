@@ -1,9 +1,15 @@
 import React from "react";
 import useSidebarControl from "../../hooks/useSidebarControl";
 import { NavLink } from "react-router-dom";
+import useSession from "../../hooks/useSession";
 
 const Sidebar = () => {
   const { isActive, setIsActive } = useSidebarControl();
+  const { user } = useSession();
+
+  if (user === null) {
+    return <></>;
+  }
 
   return (
     <aside className={`sidebar ${isActive ? `active` : ``} `}>

@@ -1,6 +1,15 @@
 import API from "../config/API";
 import { authPostConfig, authGetConfig } from "../helpers/helpers";
 
+export const getCatalog = async () => {
+  try {
+    const response = await fetch(`${API}/user/books/listall`, authGetConfig());
+    return await response.json();
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 export const addBookToCatalog = async (book) => {
   try {
     const response = await fetch(

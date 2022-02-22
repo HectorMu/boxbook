@@ -14,6 +14,7 @@ const catalogData = {
 const Details = () => {
   const [book, setBook] = useState({});
   const [onUserCatalog, setOnUserCatalog] = useState(catalogData);
+
   const { state } = useLocation();
   const { title } = useParams();
 
@@ -53,14 +54,20 @@ const Details = () => {
 
   return (
     <div className="container py-3">
-      <div className="d-flex justify-content-center justify-content-lg-end  mb-2">
-        {onUserCatalog.inCatalog ? (
-          <BookInCatalog book={onUserCatalog.book} refresh={getBookFromFetch} />
-        ) : (
-          <AddToCatalog book={book} refresh={getBookFromFetch} />
-        )}
+      <div>
+        <div className="d-flex justify-content-center justify-content-lg-end  mb-2">
+          {onUserCatalog.inCatalog ? (
+            <BookInCatalog
+              book={onUserCatalog.book}
+              refresh={getBookFromFetch}
+            />
+          ) : (
+            <AddToCatalog book={book} refresh={getBookFromFetch} />
+          )}
+        </div>
+
+        <Showcase book={book} />
       </div>
-      <Showcase book={book} />
     </div>
   );
 };
