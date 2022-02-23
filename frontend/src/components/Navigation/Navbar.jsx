@@ -2,14 +2,12 @@ import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import useSession from "../../hooks/useSession";
 import { LogOut } from "../../services/auth";
-import useSidebarControl from "../../hooks/useSidebarControl";
 import { getBooks } from "../../services/google.apis.books";
-import useServiceFetch from "../../hooks/useServiceFetch";
 import Loading from "../Global/Loading";
 
-const Navbar = () => {
+const Navbar = ({ setIsActive, isActive }) => {
   const { user, setUser } = useSession();
-  const { setIsActive, isActive } = useSidebarControl();
+
   const navigate = useNavigate();
   const [books, setBooks] = useState([]);
   const [searchTitle, setSearchTitle] = useState("");

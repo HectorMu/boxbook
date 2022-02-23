@@ -14,44 +14,43 @@ const catalogData = {
 const Details = () => {
   const [book, setBook] = useState({});
   const [onUserCatalog, setOnUserCatalog] = useState(catalogData);
-
   const { state } = useLocation();
   const { title } = useParams();
 
-  const getBookFromFetch = useCallback(async () => {
-    const fetchedBooks = await getBooks(title);
-    const exactBook = fetchedBooks.filter((book) => book.title === title);
-    setBook(exactBook[0]);
-  }, [title]);
-
-  const checkBookInCatalogHandler = useCallback(async () => {
-    const results = await checkBookInCatalog(book);
-
+  const checkOnCatalog = useCallback(async (bookToSearch) => {
+    const results = await checkBookInCatalog(bookToSearch);
     if (results.status) {
       setOnUserCatalog({
         ...onUserCatalog,
         inCatalog: true,
         book: results.book,
       });
-      return;
+    } else {
+      setOnUserCatalog({
+        ...onUserCatalog,
+        inCatalog: false,
+        book: {},
+      });
     }
-    setOnUserCatalog({
-      ...onUserCatalog,
-      inCatalog: false,
-      book: {},
-    });
-  }, [book, onUserCatalog.inCatalog]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const getBookFromFetch = useCallback(async () => {
+    const fetchedBooks = await getBooks(title);
+    const exactBook = fetchedBooks.filter((book) => book.title === title);
+    await checkOnCatalog(exactBook[0]);
+
+    setBook(exactBook[0]);
+  }, [title, checkOnCatalog]);
 
   useEffect(() => {
     if (state !== null) {
       setBook(state);
-      checkBookInCatalogHandler();
-      return;
+      checkOnCatalog(state);
+    } else {
+      getBookFromFetch();
     }
-    getBookFromFetch();
-    checkBookInCatalogHandler();
-  }, [state, getBookFromFetch, checkBookInCatalogHandler]);
-
+  }, [state, getBookFromFetch, checkOnCatalog]);
   return (
     <div className="container py-3">
       <div>
@@ -65,7 +64,6 @@ const Details = () => {
             <AddToCatalog book={book} refresh={getBookFromFetch} />
           )}
         </div>
-
         <Showcase book={book} />
       </div>
     </div>

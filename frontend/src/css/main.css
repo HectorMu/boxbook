@@ -327,10 +327,12 @@ input:-webkit-autofill:active {
   gap: 20px;
   top: 0px;
   transition: all ease-in-out 0.2s;
+  background-color: white;
 }
 
 .floating-menu:hover > .floating-options {
-  top: -35px;
+  top: -40px;
+  padding: 5px;
 }
 
 .floating-menu:focus > .floating-options {

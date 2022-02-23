@@ -52,7 +52,7 @@ const AddToCatalog = ({ book = null, refresh }) => {
       title: book.title,
       publisher: book.publisher,
       pageCount: book.pageCount,
-      author: book.authors,
+      author: book.authors && book.authors.length > 0 ? book.authors[0] : null,
       publishedDate: book.publishedDate,
       thumbnail:
         book.imageLinks && book.imageLinks.thumbnail
@@ -61,8 +61,6 @@ const AddToCatalog = ({ book = null, refresh }) => {
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [book]);
-
-  console.log(book);
 
   return (
     <Canvas

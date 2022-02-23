@@ -6,11 +6,8 @@ import "./css/main.css";
 import { Toaster } from "react-hot-toast";
 import { Routes, Route } from "react-router-dom";
 import Layout from "./components/Global/Layout";
-import Navbar from "./components/Navigation/Navbar";
-import Sidebar from "./components/Navigation/Sidebar";
 import AppRoutes from "./routes/index";
 import SessionContextProvider from "./context/SessionContextProvider";
-import SidebarControlProvider from "./context/SidebarControlProvider";
 
 function App() {
   useEffect(() => {
@@ -19,24 +16,18 @@ function App() {
   return (
     <div>
       <SessionContextProvider>
-        <SidebarControlProvider>
-          <Navbar />
-          <div className="wrapper">
-            <Sidebar />
-            <Layout>
-              <Routes>
-                {AppRoutes.production.map((route) => (
-                  <Route
-                    key={route.path}
-                    path={route.path}
-                    element={route.element}
-                  />
-                ))}
-              </Routes>
-            </Layout>
-            <Toaster />
-          </div>
-        </SidebarControlProvider>
+        <Layout>
+          <Routes>
+            {AppRoutes.production.map((route) => (
+              <Route
+                key={route.path}
+                path={route.path}
+                element={route.element}
+              />
+            ))}
+          </Routes>
+        </Layout>
+        <Toaster />
       </SessionContextProvider>
     </div>
   );

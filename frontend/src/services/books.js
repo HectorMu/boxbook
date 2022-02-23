@@ -10,6 +10,18 @@ export const getCatalog = async () => {
   }
 };
 
+export const getOneBook = async (title) => {
+  try {
+    const response = await fetch(
+      `${API}/user/books/listone/${title}`,
+      authGetConfig()
+    );
+    return await response.json();
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 export const addBookToCatalog = async (book) => {
   try {
     const response = await fetch(

@@ -15,8 +15,6 @@ const BookInCatalog = ({ book, refresh }) => {
   };
 
   const getCurrentAdvance = useCallback(async () => {
-    console.log(book.id);
-
     const results = await getBookAdvance(book.id);
     if (results.status) {
       setBookAdvance(results.bookAdvance.pagesReaded);
@@ -34,6 +32,7 @@ const BookInCatalog = ({ book, refresh }) => {
     });
     refresh();
   };
+
   useEffect(() => {
     getCurrentAdvance();
     if (book.score !== 0) {
@@ -56,7 +55,6 @@ const BookInCatalog = ({ book, refresh }) => {
               key={el}
               onMouseOver={() => setOnRating(i + 1)}
               onMouseLeave={() => setOnRating(rated)}
-              onClick={() => ratingHandlers(i)}
               className={`btn btn-sm btn-star ${
                 rated >= i + 1
                   ? `rated`

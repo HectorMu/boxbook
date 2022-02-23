@@ -3,6 +3,19 @@ const jwt = require("jsonwebtoken");
 
 const controller = {};
 
+controller.ListOne = async (req, res) => {
+  const { title } = req.params;
+  const result = await connection.query(
+    "select * from userbooks where title = ? && fk_user = ?",
+    [title, req.user.id]
+  );
+
+  if (result.length > 0) {
+    return res.json({ status: true, book: result[0] });
+  }
+  res.json({ status: false, statusText: "Not book found" });
+};
+
 controller.ListAll = async (req, res) => {
   const books = await connection.query(
     "select * from userbooks where fk_user = ?",
