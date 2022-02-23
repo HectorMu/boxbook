@@ -10,10 +10,6 @@ const BookInCatalog = ({ book, refresh }) => {
   const [rated, setRated] = useState(0);
   const { title } = useParams();
 
-  const ratingHandlers = (i) => {
-    setRated(i + 1);
-  };
-
   const getCurrentAdvance = useCallback(async () => {
     const results = await getBookAdvance(book.id);
     if (results.status) {

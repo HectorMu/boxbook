@@ -21,7 +21,9 @@ const LoginForm = () => {
     const tLoading = toast.loading("Validating...");
     const loginResults = await LogIn(credentials);
     if (!loginResults.status) {
-      return toast.error(loginResults.statusText);
+      return toast.error(loginResults.statusText, {
+        id: tLoading,
+      });
     }
 
     window.localStorage.setItem(

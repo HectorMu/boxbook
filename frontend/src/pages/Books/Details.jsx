@@ -5,6 +5,7 @@ import { checkBookInCatalog } from "../../services/books";
 import Showcase from "../../containers/Books/Details/Showcase";
 import AddToCatalog from "../../containers/Books/Details/AddToCatalog";
 import BookInCatalog from "../../containers/Books/Details/BookInCatalog";
+import Loading from "../../components/Global/Loading";
 
 const catalogData = {
   inCatalog: false,
@@ -14,6 +15,7 @@ const catalogData = {
 const Details = () => {
   const [book, setBook] = useState({});
   const [onUserCatalog, setOnUserCatalog] = useState(catalogData);
+  const [isLoading, setIsLoading] = useState(false);
   const { state } = useLocation();
   const { title } = useParams();
 
@@ -36,11 +38,13 @@ const Details = () => {
   }, []);
 
   const getBookFromFetch = useCallback(async () => {
+    setIsLoading(true);
     const fetchedBooks = await getBooks(title);
     const exactBook = fetchedBooks.filter((book) => book.title === title);
     await checkOnCatalog(exactBook[0]);
 
     setBook(exactBook[0]);
+    setIsLoading(false);
   }, [title, checkOnCatalog]);
 
   useEffect(() => {
@@ -51,21 +55,26 @@ const Details = () => {
       getBookFromFetch();
     }
   }, [state, getBookFromFetch, checkOnCatalog]);
+
   return (
     <div className="container py-3">
-      <div>
-        <div className="d-flex justify-content-center justify-content-lg-end  mb-2">
-          {onUserCatalog.inCatalog ? (
-            <BookInCatalog
-              book={onUserCatalog.book}
-              refresh={getBookFromFetch}
-            />
-          ) : (
-            <AddToCatalog book={book} refresh={getBookFromFetch} />
-          )}
+      {isLoading ? (
+        <Loading text="purple" />
+      ) : (
+        <div>
+          <div className="d-flex justify-content-center justify-content-lg-end  mb-2">
+            {onUserCatalog.inCatalog ? (
+              <BookInCatalog
+                book={onUserCatalog.book}
+                refresh={getBookFromFetch}
+              />
+            ) : (
+              <AddToCatalog book={book} refresh={getBookFromFetch} />
+            )}
+          </div>
+          <Showcase book={book} />
         </div>
-        <Showcase book={book} />
-      </div>
+      )}
     </div>
   );
 };
