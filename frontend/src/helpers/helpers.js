@@ -55,3 +55,11 @@ export const getAndSetAccessToken = () => {
   const user = JSON.parse(window.localStorage.getItem("BoxBookSession"));
   return `Bearer ${user.AccessToken}`;
 };
+
+export const alertConfig = {
+  showCancelButton: true,
+  confirmButtonColor: "#6c63ff",
+  cancelButtonColor: "#bb2d3b",
+  confirmButtonText: "Yes",
+  cancelButtonText: "No",
+};

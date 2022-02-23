@@ -3,11 +3,12 @@ import List from "../../containers/User/Books/List";
 
 const Catalog = () => {
   return (
-    <div className="container py-5">
-      <div className="d-flex justify-content-between align-items-center">
-        <h2 className="fw-bold flex-grow">My books</h2>
+    <div>
+      <div className="container py-5 ">
+        <h2 className="fw-bold text-center text-lg-start">My books</h2>
+
+        <List />
       </div>
-      <List />
     </div>
   );
 };

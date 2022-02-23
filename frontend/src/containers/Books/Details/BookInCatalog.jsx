@@ -2,6 +2,9 @@ import React, { useState, useEffect, useCallback } from "react";
 import toast from "react-hot-toast";
 import { useParams } from "react-router-dom";
 import { getBookAdvance, removeBookFromCatalog } from "../../../services/books";
+import { alertConfig } from "../../../helpers/helpers";
+import Swal from "sweetalert2";
+
 const rateStars = [1, 2, 3, 4, 5];
 
 const BookInCatalog = ({ book, refresh }) => {
@@ -18,15 +21,23 @@ const BookInCatalog = ({ book, refresh }) => {
   }, [book.id]);
 
   const removeHandler = async () => {
-    const tLoading = toast.loading("Removing..");
-    const results = await removeBookFromCatalog(title);
-    if (!results.status) {
-      toast.error("Something wen't wrong, try again later");
-    }
-    toast.success(`Book removed from catalog`, {
-      id: tLoading,
+    Swal.fire({
+      text: `¿Remove book from catalog?`,
+      icon: "info",
+      ...alertConfig,
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        const tLoading = toast.loading("Removing..");
+        const results = await removeBookFromCatalog(title);
+        if (!results.status) {
+          toast.error("Something wen't wrong, try again later");
+        }
+        toast.success(`Book removed from catalog`, {
+          id: tLoading,
+        });
+        refresh();
+      }
     });
-    refresh();
   };
 
   useEffect(() => {
