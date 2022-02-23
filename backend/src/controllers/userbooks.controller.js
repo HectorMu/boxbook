@@ -80,7 +80,7 @@ controller.getBookAdvance = async (req, res) => {
 
   try {
     const results = await connection.query(
-      "select * from userbooksadvance where fk_user = ? && fk_book = ?",
+      "select * from userbooksadvance where fk_user = ? && fk_book = ? ORDER BY id DESC LIMIT 1",
       [req.user.id, id]
     );
 
@@ -88,6 +88,23 @@ controller.getBookAdvance = async (req, res) => {
       return res.json({ status: false, bookAdvance: "Not advance" });
     }
     res.json({ status: true, bookAdvance: results[0] });
+  } catch (error) {
+    console.log(error);
+    res.json({
+      status: false,
+      statusText: "Something wen't wrong, try again later",
+    });
+  }
+};
+
+controller.getBookAdvancesHistory = async (req, res) => {
+  const { id } = req.params;
+  try {
+    const results = await connection.query(
+      "select * from userbooksadvance where fk_user = ? && fk_book = ? ORDER BY ID DESC",
+      [req.user.id, id]
+    );
+    res.json(results);
   } catch (error) {
     console.log(error);
     res.json({

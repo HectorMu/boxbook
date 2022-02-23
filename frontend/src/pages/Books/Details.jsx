@@ -5,6 +5,7 @@ import { checkBookInCatalog } from "../../services/books";
 import Showcase from "../../containers/Books/Details/Showcase";
 import AddToCatalog from "../../containers/Books/Details/AddToCatalog";
 import BookInCatalog from "../../containers/Books/Details/BookInCatalog";
+import Advances from "../../containers/Books/Details/Advances";
 import Loading from "../../components/Global/Loading";
 
 const catalogData = {
@@ -73,6 +74,14 @@ const Details = () => {
             )}
           </div>
           <Showcase book={book} />
+
+          {onUserCatalog.book.status === "Reading" ? (
+            <Advances
+              book={book}
+              onCatalogBook={onUserCatalog.book}
+              refresh={getBookFromFetch}
+            />
+          ) : null}
         </div>
       )}
     </div>

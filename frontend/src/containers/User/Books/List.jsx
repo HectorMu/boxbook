@@ -2,9 +2,9 @@ import React, { useCallback, useEffect, useState } from "react";
 import { getCatalog } from "../../../services/books";
 import useServiceFetch from "../../../hooks/useServiceFetch";
 import Loading from "../../../components/Global/Loading";
-import { Link } from "react-router-dom";
-import TruncatedText from "../../../components/Global/TruncatedText";
+import BookCard from "../../../components/User/Books/BookCard";
 
+//Arrays for each user book section
 const booksArrays = {
   pending: [],
   reading: [],
@@ -13,18 +13,9 @@ const booksArrays = {
 
 const List = () => {
   const [books, setBooks] = useState([]);
-  const { isLoading } = useServiceFetch(getCatalog, setBooks);
+  const { isLoading, refreshData } = useServiceFetch(getCatalog, setBooks);
   const [booksCat, setBooksCat] = useState(booksArrays);
-  const [onSearch, setOnSearch] = useState([]);
-
-  const handleSearch = (e) => {
-    setOnSearch(e.target.value);
-
-    const filteredBooks = books.filter((book) =>
-      book.title.includes(e.target.value)
-    );
-    setBooks(filteredBooks);
-  };
+  const [onSearch, setOnSearch] = useState("");
 
   const filterBooksByStatus = useCallback(() => {
     const pendingBooks = books.filter((b) => b.status === "Pending");
@@ -57,6 +48,7 @@ const List = () => {
             flex-md-row justify-content-lg-between 
             justify-content-md-between"
           >
+            {/* All books */}
             <h5>All books</h5>
             <div className="input-group w-auto">
               <button className="btn btn-primary">
@@ -66,164 +58,83 @@ const List = () => {
                 type="text"
                 className="form-control"
                 placeholder="Search on my books"
-                onChange={handleSearch}
+                onChange={(e) => setOnSearch(e.target.value)}
                 value={onSearch}
               />
             </div>
           </div>
-
           <div className="row mt-4">
-            {books.map((book) => (
-              <div
-                key={book.title + book.id}
-                className="col-6 col-sm-4  col-lg-3 col-xl-2 col-xxl-4"
-              >
-                <div className="floating-menu">
-                  <div className="floating-options">
-                    <Link
-                      className="btn btn-purple btn-sm w-100"
-                      to={`/books/details/${book.title}`}
-                    >
-                      <i className="fas fa-info-circle"></i>
-                    </Link>
-                    <button className="btn btn-purple btn-sm w-100">
-                      <i className="fas fa-pen"></i>
-                    </button>
-                    <button className="btn btn-danger btn-sm w-100">
-                      <i className="fas fa-trash"></i>
-                    </button>
-                  </div>
-                  <div className="card w-100 mb-5">
-                    <img
-                      src={book.thumbnail}
-                      className="card-img-top"
-                      alt="..."
-                    />
-                    <div className="card-body d-flex justify-content-center flex-column">
-                      <TruncatedText text={book.title} minimunLength={15} />
-                    </div>
-                  </div>
-                </div>
-              </div>
-            ))}
+            {books
+              .filter((book) =>
+                book.title.toLowerCase().includes(onSearch.toLowerCase())
+              )
+              .map((book) => (
+                <BookCard
+                  key={book.id + book.status}
+                  book={book}
+                  refresh={refreshData}
+                />
+              ))}
+
+            {books.filter((book) =>
+              book.title.toLowerCase().includes(onSearch.toLowerCase())
+            ).length ? (
+              0 > null
+            ) : (
+              <h1 className="py-5 text-center">
+                No books found for title '{onSearch}'
+              </h1>
+            )}
           </div>
+          {/* /All books */}
+
+          {/* Reading books */}
           <div className="border-2 border-bottom border-secondary pb-3 d-flex justify-content-between">
             <h5>Reading books</h5>
           </div>
 
           <div className="row mt-4">
             {booksCat.reading.map((book) => (
-              <div
-                key={book.title + book.id}
-                className="col-6 col-sm-4  col-lg-3 col-xl-2 col-xxl-4"
-              >
-                <div className="floating-menu">
-                  <div className="floating-options">
-                    <Link
-                      className="btn btn-purple btn-sm w-100"
-                      to={`/books/details/${book.title}`}
-                    >
-                      <i className="fas fa-info-circle"></i>
-                    </Link>
-                    <button className="btn btn-purple btn-sm w-100">
-                      <i className="fas fa-pen"></i>
-                    </button>
-                    <button className="btn btn-danger btn-sm w-100">
-                      <i className="fas fa-trash"></i>
-                    </button>
-                  </div>
-                  <div className="card w-100 mb-5">
-                    <img
-                      src={book.thumbnail}
-                      className="card-img-top"
-                      alt="..."
-                    />
-                    <div className="card-body d-flex justify-content-center flex-column">
-                      <TruncatedText text={book.title} minimunLength={15} />
-                    </div>
-                  </div>
-                </div>
-              </div>
+              <BookCard
+                key={book.id + book.status}
+                book={book}
+                refresh={refreshData}
+              />
             ))}
           </div>
+          {/* /Reading books */}
+
+          {/* Pending books */}
           <div className="border-2 border-bottom border-secondary pb-3 d-flex justify-content-between">
             <h5>Pending books</h5>
           </div>
 
           <div className="row mt-4">
             {booksCat.pending.map((book) => (
-              <div
-                key={book.title + book.id}
-                className="col-6 col-sm-4  col-lg-3 col-xl-2 col-xxl-4"
-              >
-                <div className="floating-menu">
-                  <div className="floating-options">
-                    <Link
-                      className="btn btn-purple btn-sm w-100"
-                      to={`/books/details/${book.title}`}
-                    >
-                      <i className="fas fa-info-circle"></i>
-                    </Link>
-                    <button className="btn btn-purple btn-sm w-100">
-                      <i className="fas fa-pen"></i>
-                    </button>
-                    <button className="btn btn-danger btn-sm w-100">
-                      <i className="fas fa-trash"></i>
-                    </button>
-                  </div>
-                  <div className="card w-100 mb-5">
-                    <img
-                      src={book.thumbnail}
-                      className="card-img-top"
-                      alt="..."
-                    />
-                    <div className="card-body d-flex justify-content-center flex-column w-100">
-                      <TruncatedText text={book.title} minimunLength={15} />
-                    </div>
-                  </div>
-                </div>
-              </div>
+              <BookCard
+                key={book.id + book.status}
+                book={book}
+                refresh={refreshData}
+              />
             ))}
           </div>
+          {/* /Pending books */}
+
+          {/* Read books */}
           <div className="border-2 border-bottom border-secondary pb-3 d-flex justify-content-between">
             <h5>Read books</h5>
           </div>
 
           <div className="row mt-4">
             {booksCat.read.map((book) => (
-              <div
-                key={book.title + book.id}
-                className="col-6 col-sm-4  col-lg-3 col-xl-2 col-xxl-4"
-              >
-                <div className="floating-menu">
-                  <div className="floating-options">
-                    <Link
-                      className="btn btn-purple btn-sm w-100"
-                      to={`/books/details/${book.title}`}
-                    >
-                      <i className="fas fa-info-circle"></i>
-                    </Link>
-                    <button className="btn btn-purple btn-sm w-100">
-                      <i className="fas fa-pen"></i>
-                    </button>
-                    <button className="btn btn-danger btn-sm w-100">
-                      <i className="fas fa-trash"></i>
-                    </button>
-                  </div>
-                  <div className="card w-100 mb-5">
-                    <img
-                      src={book.thumbnail}
-                      className="card-img-top"
-                      alt="..."
-                    />
-                    <div className="card-body d-flex justify-content-center flex-column">
-                      <TruncatedText text={book.title} minimunLength={15} />
-                    </div>
-                  </div>
-                </div>
-              </div>
+              <BookCard
+                key={book.id + book.status}
+                book={book}
+                refresh={refreshData}
+              />
             ))}
           </div>
+          {/* /Read books */}
         </>
       )}
     </div>

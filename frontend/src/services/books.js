@@ -69,3 +69,15 @@ export const getBookAdvance = async (id) => {
     console.log(error);
   }
 };
+
+export const getAdvancesHistory = async (id) => {
+  try {
+    const response = await fetch(
+      `${API}/user/books/advances/${id}`,
+      authGetConfig()
+    );
+    return await response.json();
+  } catch (error) {
+    console.log(error);
+  }
+};

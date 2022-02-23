@@ -26,6 +26,12 @@ router.get(
   controller.getBookAdvance
 );
 
+router.get(
+  "/api/user/books/advances/:id",
+  verifyToken,
+  controller.getBookAdvancesHistory
+);
+
 router.delete("/api/user/books/delete/:id", verifyToken, controller.Delete);
 router.put("/api/user/books/update/:id", verifyToken, controller.Update);
 
