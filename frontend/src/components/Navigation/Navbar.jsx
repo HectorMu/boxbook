@@ -37,7 +37,7 @@ const Navbar = ({ setIsActive, isActive }) => {
   };
 
   return (
-    <nav className={`navbar navbar-expand-lg navbar-dark py-3 bg-coffee`}>
+    <nav className={`navbar navbar-expand-lg navbar-dark bg-coffee`}>
       <div className="container-fluid">
         <div className="d-flex justify-content-between w-100">
           <Link

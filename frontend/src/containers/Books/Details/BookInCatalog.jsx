@@ -1,18 +1,41 @@
 import React, { useState, useEffect, useCallback } from "react";
 import toast from "react-hot-toast";
 import { useParams } from "react-router-dom";
-import { getBookAdvance, removeBookFromCatalog } from "../../../services/books";
+import {
+  getBookAdvance,
+  removeBookFromCatalog,
+  saveNewAdvance,
+} from "../../../services/books";
 import { alertConfig } from "../../../helpers/helpers";
 import Swal from "sweetalert2";
+import Canvas from "../../../components/Global/Canvas";
+import AdvanceModel from "../../../Models/Books/AdvanceModel.js";
+import FloatingLabelInput from "../../../components/Global/FloatingLabelInput";
 
 const rateStars = [1, 2, 3, 4, 5];
 
 const BookInCatalog = ({ book, refresh }) => {
   const [onRating, setOnRating] = useState(0);
   const [bookAdvance, setBookAdvance] = useState(0);
+  const [newAdvance, setNewAdvance] = useState(AdvanceModel);
   const [rated, setRated] = useState(0);
   const { title } = useParams();
 
+  const handleChange = (key, value) =>
+    setNewAdvance({ ...newAdvance, [key]: value });
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    const results = await saveNewAdvance(newAdvance);
+    console.log(results);
+    if (!results.status) {
+      return toast.error(results.statusText);
+    }
+
+    toast.success(results.statusText);
+    refresh();
+  };
   const getCurrentAdvance = useCallback(async () => {
     const results = await getBookAdvance(book.id);
     if (results.status) {
@@ -42,10 +65,11 @@ const BookInCatalog = ({ book, refresh }) => {
 
   useEffect(() => {
     getCurrentAdvance();
+    handleChange("fk_book", book.id);
     if (book.score !== 0) {
       setRated(book.score);
     }
-  }, [book.score, getCurrentAdvance]);
+  }, [book.score, getCurrentAdvance, book.id]);
 
   return (
     <div className="d-flex">
@@ -73,7 +97,39 @@ const BookInCatalog = ({ book, refresh }) => {
           ))}
         </>
       )}
-
+      {book.status === "Pending" ? (
+        <Canvas
+          id="starToReadCanvas"
+          buttonClass="btn btn-purple btn-sm me-2"
+          buttonText="Start to read"
+          icon="fas fa-glasses"
+          title="Add first book advance"
+        >
+          <form onSubmit={handleSubmit}>
+            <FloatingLabelInput
+              type="number"
+              inputId="txtPages"
+              placeholder="Page number"
+              setValue={(e) =>
+                handleChange("pagesReaded", parseInt(e.target.value))
+              }
+              value={newAdvance.pagesReaded}
+            />
+            <textarea
+              placeholder="Commentary"
+              rows="5"
+              className="form-control"
+              onChange={(e) => handleChange("commentary", e.target.value)}
+              value={newAdvance.commentary}
+            ></textarea>
+            <div className="d-flex justify-content-center mt-3">
+              <button type="submit" className="btn btn-purple btn-sm">
+                Save
+              </button>
+            </div>
+          </form>
+        </Canvas>
+      ) : null}
       <div className="dropdown">
         <button
           className="btn btn-purple btn-sm dropdown-toggle"
@@ -84,6 +140,7 @@ const BookInCatalog = ({ book, refresh }) => {
         >
           <i className="fas fa-check"></i> {book.status}
         </button>
+
         <ul
           className="dropdown-menu dropdown-menu-end"
           aria-labelledby="dropdownMenuButton1"

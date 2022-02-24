@@ -1,5 +1,9 @@
 import API from "../config/API";
-import { authPostConfig, authGetConfig } from "../helpers/helpers";
+import {
+  authPostConfig,
+  authGetConfig,
+  authPutConfig,
+} from "../helpers/helpers";
 
 export const getCatalog = async () => {
   try {
@@ -75,6 +79,30 @@ export const getAdvancesHistory = async (id) => {
     const response = await fetch(
       `${API}/user/books/advances/${id}`,
       authGetConfig()
+    );
+    return await response.json();
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const saveNewAdvance = async (advance) => {
+  try {
+    const response = await fetch(
+      `${API}/user/books/advance/save`,
+      authPostConfig(advance)
+    );
+    return await response.json();
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const setBookToRead = async (data) => {
+  try {
+    const response = await fetch(
+      `${API}/user/books/setread`,
+      authPutConfig(data)
     );
     return await response.json();
   } catch (error) {

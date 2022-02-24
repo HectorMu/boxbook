@@ -41,6 +41,26 @@ export const authPostConfig = (data) => {
   };
 };
 
+export const authPutConfig = (data) => {
+  if (data) {
+    return {
+      method: "put",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: getAndSetAccessToken(),
+      },
+      body: JSON.stringify(data),
+    };
+  }
+  return {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: getAndSetAccessToken(),
+    },
+  };
+};
+
 export const authGetConfig = () => {
   return {
     method: "GET",

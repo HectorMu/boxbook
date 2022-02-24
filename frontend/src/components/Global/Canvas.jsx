@@ -21,6 +21,7 @@ const Canvas = ({
       </button>
       <div
         className="offcanvas offcanvas-start"
+        data-bs-scroll="true"
         tabIndex={-1}
         id={id}
         aria-labelledby={`${id}Label`}

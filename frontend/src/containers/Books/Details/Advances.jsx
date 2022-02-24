@@ -1,29 +1,69 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { getBookAdvance, getAdvancesHistory } from "../../../services/books";
+import {
+  getBookAdvance,
+  getAdvancesHistory,
+  saveNewAdvance,
+  setBookToRead,
+} from "../../../services/books";
 import Canvas from "../../../components/Global/Canvas";
 import AdvancesList from "../../../components/Books/AdvancesList";
 import FloatingLabelInput from "../../../components/Global/FloatingLabelInput";
 import AdvanceModel from "../../../Models/Books/AdvanceModel";
+import BookReadModel from "../../../Models/Books/BookReadModel";
+import toast from "react-hot-toast";
 
-const Advances = ({ book, onCatalogBook }) => {
+const rateStars = [1, 2, 3, 4, 5];
+
+const Advances = ({ book, onCatalogBook, refresh }) => {
   const [currentAdvance, setCurrentAdvance] = useState({});
   const [advancesHistory, setAdvancesHistory] = useState([]);
   const [newAdvance, setNewAdvance] = useState(AdvanceModel);
+  const [finishedReading, setFinishedReading] = useState(BookReadModel);
+  const [onRating, setOnRating] = useState(0);
+  const [rated, setRated] = useState(0);
+
+  const ratingHandlers = (i) => {
+    setRated(i + 1);
+    handleChangeFinishedReading("score", i + 1);
+  };
 
   const handleChange = (key, value) =>
     setNewAdvance({ ...newAdvance, [key]: value });
 
+  const handleChangeFinishedReading = (key, value) =>
+    setFinishedReading({ ...finishedReading, [key]: value });
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    handleChange("fk_book", onCatalogBook.id);
 
-    console.log(newAdvance);
+    if (newAdvance.pagesReaded === book.pageCount) {
+      const results = await setBookToRead(finishedReading);
+      if (!results.status) {
+        return toast.error(results.statusText);
+      }
+      toast.success(results.statusText);
+      refresh();
+    } else {
+      const results = await saveNewAdvance(newAdvance);
+      if (!results.status) {
+        return toast.error(results.statusText);
+      }
+      toast.success(results.statusText);
+      refresh();
+    }
   };
 
   const getAdvanceHandler = useCallback(async () => {
     const results = await getBookAdvance(onCatalogBook.id);
+
     if (results.status) {
+      console.log(results);
       setCurrentAdvance(results.bookAdvance);
+      setNewAdvance({ ...newAdvance, fk_book: results.bookAdvance.fk_book });
+      setFinishedReading({
+        ...finishedReading,
+        id: results.bookAdvance.fk_book,
+      });
     }
   }, [onCatalogBook.id]);
 
@@ -37,10 +77,19 @@ const Advances = ({ book, onCatalogBook }) => {
     getAdvancesHistoryHandler();
   }, [getAdvanceHandler, getAdvancesHistoryHandler]);
 
-  console.log(newAdvance);
   return (
     <div className="mt-5">
-      <div className="d-flex justify-content-between">
+      <div
+        className="d-flex gap-2
+        flex-column-reverse 
+        justify-content-between
+        align-items-center 
+        flex-md-row 
+        flex-sm-column-reverse 
+        flex-lg-row 
+        flex-xl-row 
+        flex-xxl-row"
+      >
         <div>
           <h3>
             Current advance{" "}
@@ -57,6 +106,34 @@ const Advances = ({ book, onCatalogBook }) => {
           icon="fas fa-plus"
         >
           <h6 className="mb-3">Current page: {currentAdvance.pagesReaded}</h6>
+          {newAdvance.pagesReaded === book.pageCount ? (
+            <div>
+              <div className="my-4 text-start">
+                Looks like you finshed this book, this final commentary will
+                count as the book final review and the book status will be
+                changed to read.
+              </div>
+              <h5 className="text-center pt-3">Rate this book</h5>
+              <div className="d-flex justify-content-center mb-4">
+                {rateStars.map((el, i) => (
+                  <button
+                    type="button"
+                    key={el}
+                    onMouseOver={() => setOnRating(i + 1)}
+                    onMouseLeave={() => setOnRating(rated)}
+                    onClick={() => ratingHandlers(i)}
+                    className={`btn btn-sm btn-star ${
+                      rated >= i + 1
+                        ? `rated`
+                        : `${onRating >= i + 1 ? `text-purple-light` : ""} `
+                    } `}
+                  >
+                    <i className="fas fa-star responsive-font"></i>
+                  </button>
+                ))}
+              </div>
+            </div>
+          ) : null}
           <form onSubmit={handleSubmit}>
             <FloatingLabelInput
               type="number"
@@ -71,8 +148,16 @@ const Advances = ({ book, onCatalogBook }) => {
               placeholder="Commentary"
               rows="5"
               className="form-control"
-              onChange={(e) => handleChange("commentary", e.target.value)}
-              value={newAdvance.commentary}
+              onChange={
+                newAdvance.pagesReaded === book.pageCount
+                  ? (e) => handleChangeFinishedReading("review", e.target.value)
+                  : (e) => handleChange("commentary", e.target.value)
+              }
+              value={
+                newAdvance.pagesReaded === book.pageCount
+                  ? finishedReading.review
+                  : newAdvance.commentary
+              }
             ></textarea>
             <div className="d-flex justify-content-center mt-3">
               <button type="submit" className="btn btn-purple btn-sm">
@@ -105,7 +190,7 @@ const Advances = ({ book, onCatalogBook }) => {
                 aria-expanded="false"
                 aria-controls={`collapseAdvance${advance.id}`}
               >
-                Advance from pages: {advance.pagesReaded}/{book.pageCount}
+                Advance from page: {advance.pagesReaded}
               </button>
             </p>
             <div className="collapse mb-3" id={`collapseAdvance${advance.id}`}>

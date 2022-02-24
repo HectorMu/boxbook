@@ -32,6 +32,18 @@ router.get(
   controller.getBookAdvancesHistory
 );
 
+router.put(
+  "/api/user/books/setread",
+  verifyToken,
+  controller.setBookStatusToRead
+);
+
+router.post(
+  "/api/user/books/advance/save",
+  verifyToken,
+  controller.addBookAdvance
+);
+
 router.delete("/api/user/books/delete/:id", verifyToken, controller.Delete);
 router.put("/api/user/books/update/:id", verifyToken, controller.Update);
 

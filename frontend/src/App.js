@@ -10,6 +10,9 @@ import AppRoutes from "./routes/index";
 import SessionContextProvider from "./context/SessionContextProvider";
 
 function App() {
+  function scrollTop() {
+    window.scrollTo(0, 0);
+  }
   useEffect(() => {
     Aos.init();
   }, []);
@@ -23,6 +26,7 @@ function App() {
                 key={route.path}
                 path={route.path}
                 element={route.element}
+                preload={scrollTop}
               />
             ))}
           </Routes>
