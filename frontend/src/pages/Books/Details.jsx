@@ -7,6 +7,8 @@ import AddToCatalog from "../../containers/Books/Details/AddToCatalog";
 import BookInCatalog from "../../containers/Books/Details/BookInCatalog";
 import Advances from "../../containers/Books/Details/Advances";
 import Loading from "../../components/Global/Loading";
+import UserReview from "../../containers/Books/Details/UserReview";
+import Reviews from "../../containers/Books/Details/Reviews";
 
 const catalogData = {
   inCatalog: false,
@@ -81,6 +83,12 @@ const Details = () => {
               onCatalogBook={onUserCatalog.book}
               refresh={getBookFromFetch}
             />
+          ) : null}
+          {onUserCatalog.book.status === "Read" ? (
+            <>
+              <UserReview book={onUserCatalog.book} />
+              <Reviews />
+            </>
           ) : null}
         </div>
       )}

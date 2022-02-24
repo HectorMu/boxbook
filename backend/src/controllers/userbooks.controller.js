@@ -255,6 +255,23 @@ controller.setBookStatusToRead = async (req, res) => {
   }
 };
 
+controller.getBookReviews = async (req, res) => {
+  const { title } = req.params;
+  try {
+    const reviews = await connection.query(
+      "SELECT b.id, b.title, b.fk_user, b.score, b.review, b.reviewDate, u.username from userbooks b, users u WHERE b.fk_user = u.id && title = ?;",
+      [title]
+    );
+    res.json(reviews);
+  } catch (error) {
+    console.log(error);
+    res.json({
+      status: false,
+      statusText: "Something wen't wrong, try again later",
+    });
+  }
+};
+
 controller.Update = async (req, res) => {};
 
 controller.Delete = async (req, res) => {};

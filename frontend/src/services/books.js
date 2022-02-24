@@ -109,3 +109,16 @@ export const setBookToRead = async (data) => {
     console.log(error);
   }
 };
+
+export const getBookReviews = async (title) => {
+  try {
+    const response = await fetch(
+      `${API}/user/books/reviews/${title}`,
+      authGetConfig()
+    );
+
+    return await response.json();
+  } catch (error) {
+    console.log(error);
+  }
+};

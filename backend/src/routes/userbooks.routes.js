@@ -44,6 +44,12 @@ router.post(
   controller.addBookAdvance
 );
 
+router.get(
+  "/api/user/books/reviews/:title",
+  verifyToken,
+  controller.getBookReviews
+);
+
 router.delete("/api/user/books/delete/:id", verifyToken, controller.Delete);
 router.put("/api/user/books/update/:id", verifyToken, controller.Update);
 
