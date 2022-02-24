@@ -43,12 +43,13 @@ const AddToCatalog = ({ book = null, refresh }) => {
     if (bookToAdd.status === "Pending" || bookToAdd.status === "Reading") {
       setBookToAdd({ ...bookToAdd, score: 0, review: "" });
     }
+    //! Disabled cause i only want to execute this effect when book to add status changes
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [bookToAdd.status]);
 
   useEffect(() => {
     setBookToAdd({
-      ...bookToAdd,
+      ...bookModel,
       title: book.title,
       publisher: book.publisher,
       pageCount: book.pageCount,
@@ -59,7 +60,6 @@ const AddToCatalog = ({ book = null, refresh }) => {
           ? book.imageLinks.thumbnail
           : null,
     });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [book]);
 
   return (

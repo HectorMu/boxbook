@@ -26,7 +26,11 @@ export const getOneBook = async (title) => {
   }
 };
 
-export const addBookToCatalog = async (book) => {
+export const addBookToCatalog = async (data) => {
+  const book = {
+    ...data,
+    reviewDate: new Date().toLocaleString(),
+  };
   try {
     const response = await fetch(
       `${API}/user/books/save`,
