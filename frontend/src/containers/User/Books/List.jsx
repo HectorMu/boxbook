@@ -38,15 +38,15 @@ const List = () => {
     <div className="mt-5">
       {isLoading ? (
         <Loading text="purple" />
-      ) : (
+      ) : books.length > 0 ? (
         <>
           <div
             className="border-2 
-            border-bottom border-secondary 
-            pb-3 d-flex flex-column 
-            align-items-center gap-2 flex-lg-row 
-            flex-md-row justify-content-lg-between 
-            justify-content-md-between"
+          border-bottom border-secondary 
+          pb-3 d-flex flex-column 
+          align-items-center gap-2 flex-lg-row 
+          flex-md-row justify-content-lg-between 
+          justify-content-md-between"
           >
             {/* All books */}
             <h5>All books</h5>
@@ -89,53 +89,68 @@ const List = () => {
           {/* /All books */}
 
           {/* Reading books */}
-          <div className="border-2 border-bottom border-secondary pb-3 d-flex justify-content-between">
-            <h5>Reading books</h5>
-          </div>
+          {booksCat.length > 0 ? (
+            <>
+              <div className="border-2 border-bottom border-secondary pb-3 d-flex justify-content-between">
+                <h5>Reading books</h5>
+              </div>
 
-          <div className="row mt-4">
-            {booksCat.reading.map((book) => (
-              <BookCard
-                key={book.id + book.status}
-                book={book}
-                refresh={refreshData}
-              />
-            ))}
-          </div>
+              <div className="row mt-4">
+                {booksCat.reading.map((book) => (
+                  <BookCard
+                    key={book.id + book.status}
+                    book={book}
+                    refresh={refreshData}
+                  />
+                ))}
+              </div>
+            </>
+          ) : null}
           {/* /Reading books */}
 
           {/* Pending books */}
-          <div className="border-2 border-bottom border-secondary pb-3 d-flex justify-content-between">
-            <h5>Pending books</h5>
-          </div>
-
-          <div className="row mt-4">
-            {booksCat.pending.map((book) => (
-              <BookCard
-                key={book.id + book.status}
-                book={book}
-                refresh={refreshData}
-              />
-            ))}
-          </div>
+          {booksCat.pending.length > 0 ? (
+            <>
+              <div className="border-2 border-bottom border-secondary pb-3 d-flex justify-content-between">
+                <h5>Pending books</h5>
+              </div>
+              <div className="row mt-4">
+                {booksCat.pending.map((book) => (
+                  <BookCard
+                    key={book.id + book.status}
+                    book={book}
+                    refresh={refreshData}
+                  />
+                ))}
+              </div>
+            </>
+          ) : null}
           {/* /Pending books */}
 
           {/* Read books */}
-          <div className="border-2 border-bottom border-secondary pb-3 d-flex justify-content-between">
-            <h5>Read books</h5>
-          </div>
+          {booksCat.read.length > 0 ? (
+            <>
+              <div className="border-2 border-bottom border-secondary pb-3 d-flex justify-content-between">
+                <h5>Read books</h5>
+              </div>
 
-          <div className="row mt-4">
-            {booksCat.read.map((book) => (
-              <BookCard
-                key={book.id + book.status}
-                book={book}
-                refresh={refreshData}
-              />
-            ))}
-          </div>
+              <div className="row mt-4">
+                {booksCat.read.map((book) => (
+                  <BookCard
+                    key={book.id + book.status}
+                    book={book}
+                    refresh={refreshData}
+                  />
+                ))}
+              </div>
+            </>
+          ) : null}
           {/* /Read books */}
         </>
+      ) : (
+        <h3 className="text-center">
+          You dont have books yet, the books you add will show here
+        </h3>
       )}
     </div>
   );

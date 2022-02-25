@@ -2,7 +2,10 @@ import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import useSession from "../../hooks/useSession";
 import { LogOut } from "../../services/auth";
-import { getBooks } from "../../services/google.apis.books";
+import {
+  getBooks,
+  getBooksTimeOutHandler,
+} from "../../services/google.apis.books";
 import Loading from "../Global/Loading";
 
 const Navbar = ({ setIsActive, isActive }) => {
@@ -15,12 +18,13 @@ const Navbar = ({ setIsActive, isActive }) => {
 
   const searchHandler = async (title) => {
     setSearchTitle(title);
-    if (searchTitle === "") {
+    if (title === "") {
       setBooks([]);
       return;
     }
     setIsLoading(true);
-    const fetchedBooks = await getBooks(title);
+    setBooks([]);
+    const fetchedBooks = await getBooks(title.toLowerCase());
     setBooks(fetchedBooks);
     setIsLoading(false);
   };
@@ -76,72 +80,69 @@ const Navbar = ({ setIsActive, isActive }) => {
                     </div>
                   ) : null}
 
-                  {books && books.length > 0 ? (
-                    <ul
-                      style={{ top: "39px", zIndex: 20 }}
-                      className="list-group position-absolute w-100"
-                    >
-                      {books !== undefined && books.length > 0 ? (
-                        <div className="list-group-item text-decoration-none text-center d-flex justify-content-between align-items-center gap-3">
-                          <Link
-                            className="btn btn-sm btn-primary w-100"
-                            to={`books/results/${searchTitle}`}
-                          >
-                            All results
-                          </Link>
-                          <button
-                            onClick={handleResultsClose}
-                            className="btn btn-sm btn-purple w-50"
-                          >
-                            <i className="fas fa-times"></i>
-                          </button>
-                        </div>
-                      ) : null}
+                  <ul
+                    style={{ top: "39px", zIndex: 20 }}
+                    className="list-group position-absolute w-100"
+                  >
+                    {books !== undefined && books.length > 0 ? (
+                      <div className="list-group-item text-decoration-none text-center d-flex justify-content-between align-items-center gap-3">
+                        <Link
+                          className="btn btn-sm btn-primary w-100"
+                          to={`books/results/${searchTitle}`}
+                        >
+                          All results
+                        </Link>
+                        <button
+                          onClick={handleResultsClose}
+                          className="btn btn-sm btn-purple w-50"
+                        >
+                          <i className="fas fa-times"></i>
+                        </button>
+                      </div>
+                    ) : null}
 
-                      {books.map((book, i) =>
-                        book !== undefined ? (
-                          i > 4 ? null : (
-                            <Link
-                              to={`/books/details/${book.title}`}
-                              onClick={() => setBooks([])}
-                              state={book}
-                              className="list-group-item text-decoration-none"
-                              style={{ cursor: "pointer" }}
-                              key={book.title + book.publishedDate}
-                            >
-                              <div className="row">
-                                <div className="col-4">
-                                  <img
-                                    className="img-thumbnail img-fluid"
-                                    //style={{ width: "40px", height: "40px" }}
-                                    src={
-                                      book.imageLinks &&
-                                      book.imageLinks.smallThumbnail
-                                        ? book.imageLinks.smallThumbnail
-                                        : null
-                                    }
-                                    alt=""
-                                  />
-                                </div>
-                                <div className="col-8">
-                                  <div className="row">
-                                    <div className="col-12">
-                                      <small>{book.title}</small>
-                                    </div>
-                                    <div className="col-12 ">
-                                      <small className="fw-bold">
-                                        by {book.authors}
-                                      </small>
-                                    </div>
+                    {books.map((book, i) =>
+                      book !== undefined ? (
+                        i > 4 ? null : (
+                          <Link
+                            to={`/books/details/${book.title}`}
+                            onClick={() => setBooks([])}
+                            state={book}
+                            className="list-group-item text-decoration-none"
+                            style={{ cursor: "pointer" }}
+                            key={book.title + book.publishedDate}
+                          >
+                            <div className="row">
+                              <div className="col-4">
+                                <img
+                                  className="img-thumbnail img-fluid"
+                                  src={
+                                    book.imageLinks &&
+                                    book.imageLinks.smallThumbnail
+                                      ? book.imageLinks.smallThumbnail
+                                      : null
+                                  }
+                                  alt=""
+                                />
+                              </div>
+                              <div className="col-8">
+                                <div className="row">
+                                  <div className="col-12">
+                                    <small>{book.title}</small>
+                                  </div>
+                                  <div className="col-12 ">
+                                    <small className="fw-bold">
+                                      by {book.authors}
+                                    </small>
                                   </div>
                                 </div>
                               </div>
-                            </Link>
-                          )
-                        ) : null
-                      )}
-                    </ul>
-                  ) : null}
+                            </div>
+                          </Link>
+                        )
+                      ) : null
+                    )}
+                  </ul>
                 </div>
               </div>
 

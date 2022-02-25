@@ -1,20 +1,19 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { getBookReviews } from "../../../services/books";
-import useServiceFetch from "../../../hooks/useServiceFetch";
 import { useParams } from "react-router-dom";
 
 const Reviews = () => {
   const { title } = useParams();
   const [reviews, setReviews] = useState([]);
 
-  const getReviewsHandler = async () => {
+  const getReviewsHandler = useCallback(async () => {
     const fetchedReviews = await getBookReviews(title);
     setReviews(fetchedReviews);
-  };
+  }, [title]);
 
   useEffect(() => {
     getReviewsHandler();
-  }, []);
+  }, [getReviewsHandler]);
   return (
     <div>
       <h5>All reviews</h5>
