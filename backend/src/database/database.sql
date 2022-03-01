@@ -55,5 +55,5 @@ create table friendship (
      fk_usercatalog int,
      commentary varchar(500),
      foreign key (fk_visitor) references users (id),
-     foreign key (fk_usercatalog) references userBooks (fk_user)
+     foreign key (fk_usercatalog) references users (id)
  );
