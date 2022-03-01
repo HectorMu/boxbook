@@ -94,6 +94,9 @@ input:-webkit-autofill:active {
 .bg-coffee {
   background-color: var(--coffe);
 }
+.bg-purple {
+  background-color: var(--purple);
+}
 
 .btn.effect-resize {
   width: 50%;
@@ -337,4 +340,64 @@ input:-webkit-autofill:active {
 
 .floating-menu:focus > .floating-options {
   top: -35px;
+}
+.custom-shape-divider-top-1646087169 {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  overflow: hidden;
+  line-height: 0;
+}
+
+.custom-shape-divider-top-1646087169 svg {
+  position: relative;
+  display: block;
+  width: calc(100% + 1.3px);
+  height: 73px;
+}
+
+.custom-shape-divider-top-1646087169 .shape-fill {
+  fill: #6c63ff;
+}
+
+.custom-shape-divider-bottom-1646101047 {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  overflow: hidden;
+  line-height: 0;
+  transform: rotate(180deg);
+}
+
+.custom-shape-divider-bottom-1646101047 svg {
+  position: relative;
+  display: block;
+  width: calc(136% + 1.3px);
+  height: 81px;
+}
+
+.custom-shape-divider-bottom-1646101047 .shape-fill {
+  fill: #6c63ff;
+}
+
+.custom-shape-divider-top-1646101271 {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  overflow: hidden;
+  line-height: 0;
+}
+
+.custom-shape-divider-top-1646101271 svg {
+  position: relative;
+  display: block;
+  width: calc(106% + 1.3px);
+  height: 109px;
+}
+
+.custom-shape-divider-top-1646101271 .shape-fill {
+  fill: #6c63ff;
 }

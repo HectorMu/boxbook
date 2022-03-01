@@ -70,6 +70,15 @@ export const authGetConfig = () => {
     },
   };
 };
+export const authDeleteConfig = () => {
+  return {
+    method: "DELETE",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: getAndSetAccessToken(),
+    },
+  };
+};
 
 export const getAndSetAccessToken = () => {
   const user = JSON.parse(window.localStorage.getItem("BoxBookSession"));

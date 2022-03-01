@@ -48,7 +48,7 @@ const Navbar = ({ setIsActive, isActive }) => {
             data-bs-toggle="tooltip"
             data-bs-placement="top"
             title="Tooltip on top"
-            to={"/home"}
+            to={"/"}
             className="navbar-brand fw-bolder fs-4"
           >
             <span className="text-purple">B</span>
@@ -190,7 +190,17 @@ const Navbar = ({ setIsActive, isActive }) => {
                 <i className="fas fa-bars"></i>
               </button>
             </div>
-          ) : null}
+          ) : (
+            <ul className="d-flex  mb-2  " style={{ listStyle: "none" }}>
+              <Link to={"/login"} className="nav-link fw-bolder text-light">
+                Login
+              </Link>
+
+              <Link to={"/signup"} className="nav-link fw-bolder text-light">
+                Signup
+              </Link>
+            </ul>
+          )}
         </div>
       </div>
     </nav>

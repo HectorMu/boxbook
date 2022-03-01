@@ -88,6 +88,120 @@ controller.ListOne = async (req, res) => {
   }
 };
 
+controller.Contact = async (req, res) => {
+  const { id } = req.user;
+  const { contactId, message } = req.body;
+
+  console.log(contactId);
+  const friendship = {
+    user_first_id: id,
+    user_second_id: contactId,
+    message,
+    status: "Pending",
+  };
+  try {
+    await connection.query("insert into friendship set ?", friendship);
+    res.json({
+      status: true,
+      statusText: "Message sended, wait for your response!",
+    });
+  } catch (error) {
+    console.log(error);
+    res
+      .status(200)
+      .json({ status: false, statusText: "Something wen't wrong." });
+  }
+};
+
+controller.GetFrienship = async (req, res) => {
+  const { currentId } = req.body;
+  try {
+    const results = await connection.query(
+      "select * from friendship where user_first_id = ? && user_second_id = ?",
+      [req.user.id, currentId]
+    );
+    console.log(results);
+    const friendship = results[0];
+    res.json(friendship);
+  } catch (error) {
+    console.log(error);
+    res
+      .status(200)
+      .json({ status: false, statusText: "Something wen't wrong." });
+  }
+};
+
+controller.getUserCommentary = async (req, res) => {
+  try {
+    const results = await connection.query(
+      "select * from userscatalogcommentaries where fk_visitor = ? && fk_usercatalog = ?",
+      [req.user.id, req.params.user_catalog]
+    );
+
+    if (!results.length > 0) {
+      return res
+        .status(200)
+        .json({ status: false, statusText: "No commentaries" });
+    }
+    const commentary = results[0];
+    res.json(commentary);
+  } catch (error) {
+    console.log(error);
+    res
+      .status(200)
+      .json({ status: false, statusText: "Something wen't wrong." });
+  }
+};
+
+controller.getCommentaries = async (req, res) => {
+  try {
+    const commentaries = await connection.query(
+      " SELECT  * FROM view_catalogcommentaries WHERE fk_usercatalog = ? && fk_visitor != ?",
+      [req.params.user_catalog, req.user.id]
+    );
+    res.json(commentaries);
+  } catch (error) {
+    console.log(error);
+    res
+      .status(200)
+      .json({ status: false, statusText: "Something wen't wrong." });
+  }
+};
+
+controller.SaveCatalogCommentary = async (req, res) => {
+  const commentary = {
+    fk_visitor: req.user.id,
+    fk_usercatalog: req.params.user_catalog,
+    ...req.body,
+  };
+  try {
+    await connection.query("insert into userscatalogcommentaries set ?", [
+      commentary,
+    ]);
+    res.json({ status: true, statusText: "Commentary added" });
+  } catch (error) {
+    console.log(error);
+    res
+      .status(200)
+      .json({ status: false, statusText: "Something wen't wrong." });
+  }
+};
+
+controller.RemoveCommentary = async (req, res) => {
+  try {
+    await connection.query(
+      "delete from userscatalogcommentaries where id = ?",
+      [req.params.id]
+    );
+    res.json({ status: true, statusText: "Commentary removed" });
+  } catch (error) {
+    console.log(error);
+    res
+      .status(200)
+      .json({ status: false, statusText: "Something wen't wrong." });
+  }
+};
+
 controller.Save = async (req, res) => {};
 
 controller.Update = async (req, res) => {};
