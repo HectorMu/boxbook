@@ -2,10 +2,7 @@ import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import useSession from "../../hooks/useSession";
 import { LogOut } from "../../services/auth";
-import {
-  getBooks,
-  getBooksTimeOutHandler,
-} from "../../services/google.apis.books";
+import { getBooks } from "../../services/google.apis.books";
 import Loading from "../Global/Loading";
 
 const Navbar = ({ setIsActive, isActive }) => {
@@ -48,11 +45,17 @@ const Navbar = ({ setIsActive, isActive }) => {
             data-bs-toggle="tooltip"
             data-bs-placement="top"
             title="Tooltip on top"
-            to={"/"}
+            to={user === null ? "/" : "/me/catalog"}
             className="navbar-brand fw-bolder fs-4"
           >
-            <span className="text-purple">B</span>
-            <span className="text-white">B</span>
+            {user === null ? (
+              <>
+                <span className="text-purple">Box</span>
+                <span className="text-white">Book</span>
+              </>
+            ) : (
+              <i className="fas fa-home"></i>
+            )}
           </Link>
 
           {user !== null ? (
