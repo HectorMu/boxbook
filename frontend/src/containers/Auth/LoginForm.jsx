@@ -36,7 +36,7 @@ const LoginForm = () => {
       id: tLoading,
     });
 
-    navigate("/home");
+    navigate("/me/catalog");
     const hasYearlyGoal = await checkYearlyGoal();
     if (!hasYearlyGoal.status && hasYearlyGoal.statusText === "NotSetted") {
       const { value: settedGoal } = await Swal.fire({
