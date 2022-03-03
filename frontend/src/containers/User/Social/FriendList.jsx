@@ -12,7 +12,7 @@ const FriendList = () => {
     <div className="mt-5">
       {isLoading ? (
         <Loading text="purple" />
-      ) : (
+      ) : hookData.length > 0 ? (
         <div id="users-section" className="row">
           {hookData.map((user) => (
             <div
@@ -31,6 +31,13 @@ const FriendList = () => {
             </div>
           ))}
         </div>
+      ) : (
+        <h3 className="text-center text-lg-start">
+          You don't have any friends yet{" "}
+          <Link className="text-purple " to={"/meet"}>
+            Meet people!
+          </Link>{" "}
+        </h3>
       )}
     </div>
   );
