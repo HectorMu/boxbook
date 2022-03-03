@@ -6,6 +6,7 @@ const FloatingLabelInput = ({
   setValue = null,
   setClass = "",
   dataList = null,
+  status = false,
 }) => {
   return (
     <div className="formgroup__animated mb-3">
@@ -18,6 +19,7 @@ const FloatingLabelInput = ({
         defaultValue={value}
         required
         list={dataList}
+        disabled={status}
       />
       <label htmlFor={inputId} className="animated__label">
         {placeholder === "" ? "default" : placeholder}

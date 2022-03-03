@@ -44,7 +44,7 @@ export const authPostConfig = (data) => {
 export const authPutConfig = (data) => {
   if (data) {
     return {
-      method: "put",
+      method: "PUT",
       headers: {
         "Content-Type": "application/json",
         Authorization: getAndSetAccessToken(),

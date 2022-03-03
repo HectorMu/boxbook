@@ -1,4 +1,5 @@
 const connection = require("../database");
+const helpers = require("../helpers/helpers");
 
 const controller = {};
 
@@ -42,6 +43,71 @@ controller.ListAll = async (req, res) => {
   console.log(userData);
   res.json({ Data: "Im the data" });
 };
+
+controller.editProfile = async (req, res) => {
+  const data = req.body;
+  const { id } = req.user;
+
+  try {
+    if (data.password) {
+      data.password = await helpers.encryptPassword(data.password);
+    }
+
+    await connection.query("update users set ? where id = ? ", [data, id]);
+    res.status(200).json({ status: true, statusText: "Profile edited!" });
+  } catch (error) {
+    console.log(error);
+    res
+      .status(200)
+      .json({ status: false, statusText: "Something wen't wrong." });
+  }
+};
+
+controller.getProfile = async (req, res) => {
+  try {
+    const results = await connection.query("select * from users where id = ?", [
+      req.user.id,
+    ]);
+    const profile = results[0];
+    res.json(profile);
+  } catch (error) {
+    console.log(error);
+    res
+      .status(200)
+      .json({ status: false, statusText: "Something wen't wrong." });
+  }
+};
+
+// controller.getContactMessages = async (req, res) => {
+//   try {
+//     const results = await connection.query(
+//       "select * from VIEW_friendshipsender where user_second_id = ?",
+//       [req.user.id]
+//     );
+//     res.json(results);
+//   } catch (error) {
+//     console.log(error);
+//     res
+//       .status(200)
+//       .json({ status: false, statusText: "Something wen't wrong." });
+//   }
+// };
+
+controller.getFriends = async (req, res) => {
+  try {
+    const friends = await connection.query(
+      "SELECT * FROM view_receiverfriends  where receiver = ?",
+      [req.user.id]
+    );
+    res.json(friends);
+  } catch (error) {
+    console.log(error);
+    res
+      .status(200)
+      .json({ status: false, statusText: "Something wen't wrong." });
+  }
+};
+
 controller.ListOne = async (req, res) => {};
 
 controller.Save = async (req, res) => {};

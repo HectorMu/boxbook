@@ -14,8 +14,30 @@ router.get(
 
 router.get("/api/social/listone/:id", verifyToken, controller.ListOne);
 router.get("/api/social/catalog/:id", verifyToken, controller.ListCatalog);
-router.post("/api/social/contact", verifyToken, controller.Contact);
-router.post("/api/social/frienship", verifyToken, controller.GetFrienship);
+
+router.post(
+  "/api/social/frienship/sender",
+  verifyToken,
+  controller.GetFrienshipSender
+);
+router.post(
+  "/api/social/frienship/receiver",
+  verifyToken,
+  controller.GetFrienshipReceiver
+);
+
+router.post("/api/social/addfriend", verifyToken, controller.addAsFriend);
+router.delete(
+  "/api/social/removefriend/:id",
+  verifyToken,
+  controller.removeFriend
+);
+
+router.get(
+  "/api/social/getsolitudes",
+  verifyToken,
+  controller.getFriendSolitudes
+);
 
 router.post(
   "/api/social/new/commentary/:user_catalog",

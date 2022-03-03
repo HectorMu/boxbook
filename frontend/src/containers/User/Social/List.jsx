@@ -17,7 +17,7 @@ const List = () => {
           {localUsers.map((user) => (
             <div
               key={user.id + user.username}
-              className="col-12 col-md-6 col-lg-6 col-xl-4 col-xxl-3"
+              className="col-12 col-md-6 col-lg-6 col-xl-4 col-xxl-4"
             >
               <Link
                 to={`/profile/${user.id}/${user.username}`}

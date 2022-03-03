@@ -34,6 +34,22 @@ controller.Save = async (req, res) => {
     if (book.pagesReaded === 0) {
       delete book.pagesReaded;
       await connection.query("insert into userbooks set ?", [book]);
+
+      ///updating the user readedBooks
+      //Get the count of books
+      const readedUserBooks = await connection.query(
+        `select Count(*) as Count from userbooks where fk_user = ? && status ='Read'`,
+        [req.user.id]
+      );
+
+      //extract the result
+      const bookCount = readedUserBooks[0].Count;
+
+      //updating the user readedBooks
+      await connection.query("update users set booksReaded = ? where id = ?", [
+        bookCount,
+        req.user.id,
+      ]);
       return res
         .status(200)
         .json({ status: true, statusText: "Book added to catalog" });
@@ -65,6 +81,22 @@ controller.Save = async (req, res) => {
 
       await connection.query("insert into userbooksadvance set ?", [advance]);
     }
+
+    ///updating the user readedBooks
+    //Get the count of books
+    const readedUserBooks = await connection.query(
+      `select Count(*) as Count from userbooks where fk_user = ? && status ='Read'`,
+      [req.user.id]
+    );
+
+    //extract the result
+    const bookCount = readedUserBooks[0].Count;
+
+    //updating the user readedBooks
+    await connection.query("update users set booksReaded = ? where id = ?", [
+      bookCount,
+      req.user.id,
+    ]);
     res.status(200).json({ status: true, statusText: "Book added to catalog" });
   } catch (error) {
     console.log(error);
@@ -162,6 +194,21 @@ controller.removeBookFromCatalog = async (req, res) => {
       [title, id]
     );
 
+    //updating the user readedBooks
+    //Get the count of books
+    const readedUserBooks = await connection.query(
+      `select Count(*) as Count from userbooks where fk_user = ? && status ='Read'`,
+      [id]
+    );
+    //extract the result
+    const bookCount = readedUserBooks[0].Count;
+
+    //updating the user readedBooks
+    await connection.query("update users set booksReaded = ? where id = ?", [
+      bookCount,
+      id,
+    ]);
+
     res.json({
       status: true,
       statusText: "Removed from catalog",
@@ -238,10 +285,26 @@ controller.setBookStatusToRead = async (req, res) => {
     review,
   };
   try {
+    //Changuing the book status
     await connection.query(
       "update userbooks set ? where id = ? && fk_user = ? ",
       [book, id, req.user.id]
     );
+
+    //updating the user readedBooks
+    //Get the count of books
+    const readedUserBooks = await connection.query(
+      `select Count(*) as Count from userbooks where fk_user = ? && status ='Read'`,
+      [req.user.id]
+    );
+    //extract the result
+    const bookCount = readedUserBooks[0].Count;
+
+    //updating the user readedBooks
+    await connection.query("update users set booksReaded = ? where id = ?", [
+      bookCount,
+      req.user.id,
+    ]);
     res.json({
       status: true,
       statusText: "Book finished! keep it up!",

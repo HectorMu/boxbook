@@ -50,10 +50,22 @@ export const contactUser = async (data) => {
   }
 };
 
-export const getFriendship = async (currentId) => {
+export const getFriendshipSender = async (currentId) => {
   try {
     const response = await fetch(
-      `${API}/social/frienship`,
+      `${API}/social/frienship/sender`,
+      authPostConfig({ currentId })
+    );
+    return await response.json();
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const getFriendshipReceiver = async (currentId) => {
+  try {
+    const response = await fetch(
+      `${API}/social/frienship/receiver`,
       authPostConfig({ currentId })
     );
     return await response.json();
@@ -102,6 +114,30 @@ export const removeCommentary = async (id) => {
   try {
     const response = await fetch(
       `${API}/catalog/commentary/remove/${id}`,
+      authDeleteConfig()
+    );
+    return await response.json();
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const addAsFriend = async (receiver) => {
+  try {
+    const response = await fetch(
+      `${API}/social/addfriend`,
+      authPostConfig({ receiver })
+    );
+    return await response.json();
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const removeFriend = async (id) => {
+  try {
+    const response = await fetch(
+      `${API}/social/removefriend/${id}`,
       authDeleteConfig()
     );
     return await response.json();

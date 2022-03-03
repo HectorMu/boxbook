@@ -27,6 +27,51 @@ controller.ListCatalog = async (req, res) => {
   }
 };
 
+controller.addAsFriend = async (req, res) => {
+  const { receiver } = req.body;
+
+  const newSolitude = {
+    sender: req.user.id,
+    receiver,
+    status: "Pending",
+  };
+
+  try {
+    const results = await connection.query(
+      "select * from friendship where sender = ? &&  receiver = ? || sender = ? &&  receiver = ?",
+      [req.user.id, receiver, receiver, req.user.id]
+    );
+    if (results.length > 0) {
+      await connection.query(
+        "update friendship set status = 'Friends' where sender = ? &&  receiver = ? || sender = ? &&  receiver = ?",
+        [req.user.id, receiver, receiver, req.user.id]
+      );
+
+      return res.json({ status: true, statusText: "Solitude accepted!" });
+    }
+    await connection.query("insert into friendship set ?", [newSolitude]);
+    res.json({ status: true, statusText: "Added as a friend!" });
+  } catch (error) {
+    console.log(error);
+    res
+      .status(200)
+      .json({ status: false, statusText: "Something wen't wrong." });
+  }
+};
+
+controller.removeFriend = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    await connection.query("delete from friendship where id = ?", [id]);
+    res.json({ status: true, statusText: "Removed as a friend!" });
+  } catch (error) {
+    console.log(error);
+    res
+      .status(200)
+      .json({ status: false, statusText: "Something wen't wrong." });
+  }
+};
 controller.ListSameLocation = async (req, res) => {
   try {
     const FindCurrentUser = await connection.query(
@@ -88,23 +133,13 @@ controller.ListOne = async (req, res) => {
   }
 };
 
-controller.Contact = async (req, res) => {
-  const { id } = req.user;
-  const { contactId, message } = req.body;
-
-  console.log(contactId);
-  const friendship = {
-    user_first_id: id,
-    user_second_id: contactId,
-    message,
-    status: "Pending",
-  };
+controller.getFriendSolitudes = async (req, res) => {
   try {
-    await connection.query("insert into friendship set ?", friendship);
-    res.json({
-      status: true,
-      statusText: "Message sended, wait for your response!",
-    });
+    const solitudes = await connection.query(
+      "SELECT * FROM view_receivernotifications where receiver = ?",
+      [req.user.id]
+    );
+    res.json(solitudes);
   } catch (error) {
     console.log(error);
     res
@@ -113,12 +148,30 @@ controller.Contact = async (req, res) => {
   }
 };
 
-controller.GetFrienship = async (req, res) => {
+controller.GetFrienshipSender = async (req, res) => {
   const { currentId } = req.body;
   try {
     const results = await connection.query(
-      "select * from friendship where user_first_id = ? && user_second_id = ?",
-      [req.user.id, currentId]
+      "select * from friendship where receiver = ? && sender = ?",
+      [currentId, req.user.id]
+    );
+    console.log(results);
+    const friendship = results[0];
+    res.json(friendship);
+  } catch (error) {
+    console.log(error);
+    res
+      .status(200)
+      .json({ status: false, statusText: "Something wen't wrong." });
+  }
+};
+
+controller.GetFrienshipReceiver = async (req, res) => {
+  const { currentId } = req.body;
+  try {
+    const results = await connection.query(
+      "select * from friendship where sender = ? && receiver = ? ",
+      [currentId, req.user.id]
     );
     console.log(results);
     const friendship = results[0];
