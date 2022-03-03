@@ -99,6 +99,7 @@ controller.getFriends = async (req, res) => {
       "SELECT * FROM view_receiverfriends  where receiver = ?",
       [req.user.id]
     );
+
     res.json(friends);
   } catch (error) {
     console.log(error);

@@ -35,6 +35,11 @@ controller.addAsFriend = async (req, res) => {
     receiver,
     status: "Pending",
   };
+  const newSolitudeInverse = {
+    sender: receiver,
+    receiver: req.user.id,
+    status: "Pending",
+  };
 
   try {
     const results = await connection.query(
@@ -50,6 +55,9 @@ controller.addAsFriend = async (req, res) => {
       return res.json({ status: true, statusText: "Solitude accepted!" });
     }
     await connection.query("insert into friendship set ?", [newSolitude]);
+    await connection.query("insert into friendship set ?", [
+      newSolitudeInverse,
+    ]);
     res.json({ status: true, statusText: "Added as a friend!" });
   } catch (error) {
     console.log(error);
