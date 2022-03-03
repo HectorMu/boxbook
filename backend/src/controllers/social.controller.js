@@ -36,8 +36,8 @@ controller.addAsFriend = async (req, res) => {
     status: "Pending",
   };
   const newSolitudeInverse = {
-    sender: receiver,
-    receiver: req.user.id,
+    sender: req.user.id,
+    receiver,
     status: "Pending",
   };
 
@@ -47,6 +47,9 @@ controller.addAsFriend = async (req, res) => {
       [req.user.id, receiver, receiver, req.user.id]
     );
     if (results.length > 0) {
+      await connection.query("insert into friendship set ?", [
+        newSolitudeInverse,
+      ]);
       await connection.query(
         "update friendship set status = 'Friends' where sender = ? &&  receiver = ? || sender = ? &&  receiver = ?",
         [req.user.id, receiver, receiver, req.user.id]
@@ -55,9 +58,7 @@ controller.addAsFriend = async (req, res) => {
       return res.json({ status: true, statusText: "Solitude accepted!" });
     }
     await connection.query("insert into friendship set ?", [newSolitude]);
-    await connection.query("insert into friendship set ?", [
-      newSolitudeInverse,
-    ]);
+
     res.json({ status: true, statusText: "Added as a friend!" });
   } catch (error) {
     console.log(error);

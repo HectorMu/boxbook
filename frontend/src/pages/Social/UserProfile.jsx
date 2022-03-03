@@ -108,7 +108,7 @@ const UserProfile = () => {
                       </button>
                     ) : null}
 
-                    {friendshipSender !== null &&
+                    {/* {friendshipSender !== null &&
                     friendshipSender.status === "Friends" ? (
                       <button
                         onClick={removeAsFriendHandler}
@@ -116,7 +116,7 @@ const UserProfile = () => {
                       >
                         <i className="fas fa-check"></i> Friends
                       </button>
-                    ) : null}
+                    ) : null} */}
 
                     {friendshipReceiver !== null &&
                     friendshipReceiver.status === "Friends" ? (
