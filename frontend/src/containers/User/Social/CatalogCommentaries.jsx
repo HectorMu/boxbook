@@ -15,7 +15,7 @@ const CatalogCommentaries = () => {
   useEffect(() => {
     getCommentariesHandler();
   }, [getCommentariesHandler]);
-  console.log(commentaries);
+
   return (
     <div className="mt-5">
       <h4>All commentaries</h4>

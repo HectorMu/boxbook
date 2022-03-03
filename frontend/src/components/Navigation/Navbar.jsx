@@ -4,6 +4,8 @@ import useSession from "../../hooks/useSession";
 import { LogOut } from "../../services/auth";
 import { getBooks } from "../../services/google.apis.books";
 import Loading from "../Global/Loading";
+//import MessagesDropdown from "./MessagesDropdown";
+import NotificationsDropdown from "./NotificationsDropdown";
 
 const Navbar = ({ setIsActive, isActive }) => {
   const { user, setUser } = useSession();
@@ -149,6 +151,7 @@ const Navbar = ({ setIsActive, isActive }) => {
                 </div>
               </div>
 
+              <NotificationsDropdown />
               <div className="dropdown">
                 <button
                   className="btn btn-sm text-white dropdown-toggle"
@@ -159,7 +162,7 @@ const Navbar = ({ setIsActive, isActive }) => {
                 >
                   <span className="d-none d-sm-inline-block d-md-inline-block d-lg-inline-block d-xl-inline-block d-xxl-inline-block">
                     {user.username}
-                  </span>{" "}
+                  </span>
                   <i className="fas fa-user"></i>
                 </button>
                 <ul
@@ -167,9 +170,12 @@ const Navbar = ({ setIsActive, isActive }) => {
                   aria-labelledby="dropdownMenuButton1"
                 >
                   <li>
-                    <a className="dropdown-item py-1  text-muted" href="#">
+                    <Link
+                      className="dropdown-item py-1  text-muted"
+                      to="/profile"
+                    >
                       <i className="fas fa-cog"></i> Profile
-                    </a>
+                    </Link>
                   </li>
 
                   <li>

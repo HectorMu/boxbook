@@ -5,7 +5,11 @@ const TruncatedText = ({
   minimunLength = 15,
 }) => {
   return (
-    <p>{text.length > minimunLength ? text.slice(0, 15) + "..." : text}</p>
+    <p>
+      {text.length > minimunLength
+        ? text.slice(0, minimunLength) + "..."
+        : text}
+    </p>
   );
 };
 

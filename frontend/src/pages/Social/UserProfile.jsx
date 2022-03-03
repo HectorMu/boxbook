@@ -2,30 +2,65 @@ import React, { useCallback, useEffect, useState } from "react";
 import {
   getUserProfile,
   getUserCatalog,
-  getFriendship,
+  addAsFriend,
+  getFriendshipSender,
+  getFriendshipReceiver,
+  removeFriend,
 } from "../../services/social";
 import { useParams } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import TruncatedText from "../../components/Global/TruncatedText";
-import Contact from "../../containers/User/Social/Contact";
+
 import CatalogCommentaries from "../../containers/User/Social/CatalogCommentaries";
 import UserOwnCommentary from "../../containers/User/Social/UserOwnCommentary";
+import toast from "react-hot-toast";
 
 const UserProfile = () => {
   const [profile, setProfile] = useState({});
   const [catalog, setCatalog] = useState([]);
-  const [friendship, setFriendship] = useState(null);
+  const [friendshipId, setFriendshipId] = useState(0);
+  const [friendshipSender, setFriendshipSender] = useState(null);
+  const [friendshipReceiver, setFriendshipReceiver] = useState(null);
   const navigate = useNavigate();
   const { id } = useParams();
 
-  const getCurrentFriendshipStatus = useCallback(async () => {
-    const results = await getFriendship(id);
+  const addAsFriendHandler = async () => {
+    const results = await addAsFriend(id);
+    if (!results.status) {
+      return toast.error(results.statusText);
+    }
+    toast.success(`Added as a friend, wait for ${profile.username} response`);
+    await getCurrentFriendshipSender();
+    await getCurrentFriendshipReceiver();
+  };
+  const removeAsFriendHandler = async () => {
+    const results = await removeFriend(friendshipId);
+    if (!results.status) {
+      return toast.error(results.statusText);
+    }
+    toast.success(`Removed ${profile.username} as a friend`);
+    await getCurrentFriendshipSender();
+    await getCurrentFriendshipReceiver();
+  };
 
+  const getCurrentFriendshipSender = useCallback(async () => {
+    const results = await getFriendshipSender(id);
     if (results !== undefined) {
-      setFriendship(results);
+      setFriendshipSender(results);
+      setFriendshipId(results.id);
       return;
     }
-    setFriendship(null);
+    setFriendshipSender(null);
+  }, [id]);
+
+  const getCurrentFriendshipReceiver = useCallback(async () => {
+    const results = await getFriendshipReceiver(id);
+    if (results !== undefined) {
+      setFriendshipReceiver(results);
+      setFriendshipId(results.id);
+      return;
+    }
+    setFriendshipReceiver(null);
   }, [id]);
 
   const getProfileHandler = useCallback(async () => {
@@ -41,11 +76,20 @@ const UserProfile = () => {
   useEffect(() => {
     getProfileHandler();
     getCatalogHandler();
-    getCurrentFriendshipStatus();
-  }, [getProfileHandler, getCatalogHandler, getCurrentFriendshipStatus]);
+    getCurrentFriendshipSender();
+    getCurrentFriendshipReceiver();
+  }, [
+    getProfileHandler,
+    getCatalogHandler,
+    getCurrentFriendshipSender,
+    getCurrentFriendshipReceiver,
+  ]);
 
   return (
     <div className="container py-5">
+      {friendshipReceiver !== null && friendshipReceiver.status === "Pending"
+        ? ` ${profile.username} Sended you a friend request`
+        : null}
       <div className="row  d-flex align-items-center">
         <div className="col-lg-7 ">
           <div className="mb-3  d-flex align-items-center py-5 shadow-lg">
@@ -56,17 +100,45 @@ const UserProfile = () => {
               <div className="col-md-8 ">
                 <div className="card-body">
                   <h5 className="card-title d-flex justify-content-between mb-4">
-                    {profile.username}{" "}
-                    {friendship !== null && friendship.status === "Pending" ? (
+                    {profile.username}
+                    {friendshipSender !== null &&
+                    friendshipSender.status === "Pending" ? (
                       <button className="btn btn-purple btn-sm">
                         Response pending
                       </button>
-                    ) : (
-                      <Contact
-                        profile={profile}
-                        refresh={getCurrentFriendshipStatus}
-                      />
-                    )}
+                    ) : null}
+
+                    {friendshipSender !== null &&
+                    friendshipSender.status === "Friends" ? (
+                      <button
+                        onClick={removeAsFriendHandler}
+                        className="btn btn-purple btn-sm"
+                      >
+                        <i className="fas fa-check"></i> Friends
+                      </button>
+                    ) : null}
+
+                    {friendshipReceiver !== null &&
+                    friendshipReceiver.status === "Friends" ? (
+                      <button
+                        onClick={removeAsFriendHandler}
+                        className="btn btn-purple btn-sm"
+                      >
+                        <i className="fas fa-check"></i>
+                        Friends
+                      </button>
+                    ) : friendshipSender === null ? (
+                      <button
+                        onClick={addAsFriendHandler}
+                        className="btn btn-purple btn-sm"
+                      >
+                        <i className="fas fa-user"></i>{" "}
+                        {friendshipReceiver !== null &&
+                        friendshipReceiver.status === "Pending"
+                          ? `Accept request`
+                          : `Add to friend list`}
+                      </button>
+                    ) : null}
                   </h5>
                   <p className="card-text">
                     Hi, my full name is {profile.fullname} and i have readed{" "}
