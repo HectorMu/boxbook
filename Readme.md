@@ -32,3 +32,14 @@
   
 ## Retrieveng a book from the API to our database.
 ![Captura de pantalla (67)](https://user-images.githubusercontent.com/42363909/172765305-7f8c6289-7251-4820-b7b0-9b4e1d9302df.png)
+
+### I selected pending to show how the user can add book read advances
+![Captura de pantalla (69)](https://user-images.githubusercontent.com/42363909/172765322-b8bc3564-16a1-4b0c-aa62-d18dda8c5ebb.png)
+
+## Adding book advance
+![Captura de pantalla (70)](https://user-images.githubusercontent.com/42363909/172765329-598316c3-f1b1-4e46-9c3a-ce56ccabf601.png)
+
+## Now the book status is changed to reading and we can add new advances and see the old advances listed 
+![Captura de pantalla (71)](https://user-images.githubusercontent.com/42363909/172765331-fcfb2ac3-ae82-4611-8812-474c6dc3ba7b.png)
+
+
