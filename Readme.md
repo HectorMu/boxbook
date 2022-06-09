@@ -3,8 +3,7 @@
 
 ## Functionality
 
-  1. The app let users to register and login into their account
-  ![xd](https://user-images.githubusercontent.com/42363909/172765271-196f14a9-24c5-41fb-b471-14d405e519c4.png)
+  1. The app let users to register and login into their account.
   3. Search for books on the app and add it on the catalog
   4. Add users has a friends, and watch their catalog
   5. Flag books as read, reading, and as pending.
@@ -18,3 +17,6 @@
 
 
 
+### Signup page
+
+  ![xd](https://user-images.githubusercontent.com/42363909/172765271-196f14a9-24c5-41fb-b471-14d405e519c4.png)
