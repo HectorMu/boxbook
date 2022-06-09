@@ -11,6 +11,7 @@
   6. Leave comments on another users catalog
   7. Remove books from their catalog.
   8. Search users based on user location.
+  9. If the user don't have a book yearly goal to read, then a modal will pop up everytime he log's in.
   
 ### The app itself its a monorepo that join the back end and the front end
 
