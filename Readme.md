@@ -16,7 +16,7 @@
 ### The app itself its a monorepo that join the back end and the front end
 
 
-# App prints
+# App screenshots
 
 ### Signup page
   ![xd](https://user-images.githubusercontent.com/42363909/172765271-196f14a9-24c5-41fb-b471-14d405e519c4.png)
