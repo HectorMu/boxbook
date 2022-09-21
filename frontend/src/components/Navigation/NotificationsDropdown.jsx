@@ -1,6 +1,5 @@
-import React, { useEffect, useState } from "react";
+import React, { useState, useEffect } from "react";
 import { getSolitudes } from "../../services/user";
-import TruncatedText from "../../components/Global/TruncatedText";
 import { Link } from "react-router-dom";
 
 const NotificationsDropdown = () => {
@@ -11,9 +10,12 @@ const NotificationsDropdown = () => {
     setNotifications(fetchedNotifications);
   };
 
-  setTimeout(async () => {
-    await getNotificationsHandler();
-  }, 1500);
+  // setTimeout(async () => {
+  //   await getNotificationsHandler();
+  // }, 1500);
+  useEffect(() => {
+    getNotificationsHandler();
+  }, []);
   return (
     <div className="dropdown">
       {notifications.length > 0 ? (

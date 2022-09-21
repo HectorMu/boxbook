@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import useServiceFetch from "../../../hooks/useServiceFetch";
 import { Link } from "react-router-dom";
 

@@ -25,28 +25,26 @@ const Details = () => {
   const checkOnCatalog = useCallback(async (bookToSearch) => {
     const results = await checkBookInCatalog(bookToSearch);
     if (results.status) {
-      setOnUserCatalog({
-        ...onUserCatalog,
+      setOnUserCatalog((prev) => ({
+        ...prev,
         inCatalog: true,
         book: results.book,
-      });
+      }));
     } else {
-      setOnUserCatalog({
-        ...onUserCatalog,
+      setOnUserCatalog((prev) => ({
+        ...prev,
         inCatalog: false,
         book: {},
-      });
+      }));
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const getBookFromFetch = useCallback(async () => {
     setIsLoading(true);
     const fetchedBooks = await getBooks(title);
-    const exactBook = fetchedBooks.filter((book) => book.title === title);
-    await checkOnCatalog(exactBook[0]);
-
-    setBook(exactBook[0]);
+    const exactBook = fetchedBooks.find((book) => book.title === title);
+    await checkOnCatalog(exactBook);
+    setBook(exactBook);
     setIsLoading(false);
   }, [title, checkOnCatalog]);
 

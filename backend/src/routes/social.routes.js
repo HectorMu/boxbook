@@ -27,8 +27,9 @@ router.post(
 );
 
 router.post("/api/social/addfriend", verifyToken, controller.addAsFriend);
+router.post("/api/social/acceptfriend", verifyToken, controller.acceptFriend);
 router.delete(
-  "/api/social/removefriend/:id",
+  "/api/social/removefriend/:receiver",
   verifyToken,
   controller.removeFriend
 );

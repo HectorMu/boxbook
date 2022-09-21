@@ -133,11 +133,22 @@ export const addAsFriend = async (receiver) => {
     console.log(error);
   }
 };
-
-export const removeFriend = async (id) => {
+export const acceptFriend = async (sender) => {
   try {
     const response = await fetch(
-      `${API}/social/removefriend/${id}`,
+      `${API}/social/acceptfriend`,
+      authPostConfig({ sender })
+    );
+    return await response.json();
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const removeFriend = async ({ receiver }) => {
+  try {
+    const response = await fetch(
+      `${API}/social/removefriend/${receiver}`,
       authDeleteConfig()
     );
     return await response.json();

@@ -27,6 +27,38 @@ controller.ListCatalog = async (req, res) => {
   }
 };
 
+controller.acceptFriend = async (req, res) => {
+  const { sender } = req.body;
+
+  const solitudeToAccept = {
+    sender: req.user.id,
+    receiver: sender,
+    status: "Pending",
+  };
+
+  try {
+    const results = await connection.query(
+      "select * from friendship where sender = ? && receiver = ?",
+      [sender, req.user.id]
+    );
+    if (results.length > 0) {
+      await connection.query("insert into friendship set ?", [
+        solitudeToAccept,
+      ]);
+      await connection.query(
+        "update friendship set status = 'Friends' where sender  = ? && receiver = ? || receiver = ? && sender = ? ",
+        [sender, req.user.id, req.user.id, sender]
+      );
+    }
+    res.json({ status: true, statusText: "Solitude accepted!" });
+  } catch (error) {
+    console.log(error);
+    res
+      .status(200)
+      .json({ status: false, statusText: "Something wen't wrong." });
+  }
+};
+
 controller.addAsFriend = async (req, res) => {
   const { receiver } = req.body;
 
@@ -35,29 +67,15 @@ controller.addAsFriend = async (req, res) => {
     receiver,
     status: "Pending",
   };
-  const newSolitudeInverse = {
-    sender: req.user.id,
-    receiver,
-    status: "Pending",
-  };
 
   try {
     const results = await connection.query(
-      "select * from friendship where sender = ? &&  receiver = ? || sender = ? &&  receiver = ?",
-      [req.user.id, receiver, receiver, req.user.id]
+      "select * from friendship where sender = ? &&  receiver = ?",
+      [req.user.id, receiver]
     );
-    if (results.length > 0) {
-      await connection.query("insert into friendship set ?", [
-        newSolitudeInverse,
-      ]);
-      await connection.query(
-        "update friendship set status = 'Friends' where sender = ? &&  receiver = ? || sender = ? &&  receiver = ?",
-        [req.user.id, receiver, receiver, req.user.id]
-      );
-
-      return res.json({ status: true, statusText: "Solitude accepted!" });
+    if (!results.length > 0) {
+      await connection.query("insert into friendship set ?", [newSolitude]);
     }
-    await connection.query("insert into friendship set ?", [newSolitude]);
 
     res.json({ status: true, statusText: "Added as a friend!" });
   } catch (error) {
@@ -69,10 +87,18 @@ controller.addAsFriend = async (req, res) => {
 };
 
 controller.removeFriend = async (req, res) => {
-  const { id } = req.params;
+  const { receiver } = req.params;
 
+  const sender = req.user.id;
   try {
-    await connection.query("delete from friendship where id = ?", [id]);
+    await connection.query(
+      "delete from friendship where sender  = ? || receiver = ?",
+      [sender, sender]
+    );
+    await connection.query(
+      "delete from friendship where receiver  = ? || sender = ?",
+      [receiver, receiver]
+    );
     res.json({ status: true, statusText: "Removed as a friend!" });
   } catch (error) {
     console.log(error);
@@ -161,8 +187,8 @@ controller.GetFrienshipSender = async (req, res) => {
   const { currentId } = req.body;
   try {
     const results = await connection.query(
-      "select * from friendship where receiver = ? && sender = ?",
-      [currentId, req.user.id]
+      "select * from friendship where sender = ? && receiver = ?",
+      [req.user.id, currentId]
     );
     console.log(results);
     const friendship = results[0];

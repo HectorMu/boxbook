@@ -59,11 +59,14 @@ const Advances = ({ book, onCatalogBook, refresh }) => {
     if (results.status) {
       console.log(results);
       setCurrentAdvance(results.bookAdvance);
-      setNewAdvance({ ...newAdvance, fk_book: results.bookAdvance.fk_book });
-      setFinishedReading({
-        ...finishedReading,
+      setNewAdvance((prev) => ({
+        ...prev,
+        fk_book: results.bookAdvance.fk_book,
+      }));
+      setFinishedReading((prev) => ({
+        ...prev,
         id: results.bookAdvance.fk_book,
-      });
+      }));
     }
   }, [onCatalogBook.id]);
 

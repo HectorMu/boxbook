@@ -6,6 +6,7 @@ import {
   getFriendshipSender,
   getFriendshipReceiver,
   removeFriend,
+  acceptFriend,
 } from "../../services/social";
 import { useParams } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
@@ -33,8 +34,9 @@ const UserProfile = () => {
     await getCurrentFriendshipSender();
     await getCurrentFriendshipReceiver();
   };
+
   const removeAsFriendHandler = async () => {
-    const results = await removeFriend(friendshipId);
+    const results = await removeFriend(id);
     if (!results.status) {
       return toast.error(results.statusText);
     }
@@ -43,8 +45,19 @@ const UserProfile = () => {
     await getCurrentFriendshipReceiver();
   };
 
+  const acceptAsFriendHandler = async () => {
+    const results = await acceptFriend(id);
+    if (!results.status) {
+      return toast.error(results.statusText);
+    }
+    toast.success(`Accepted ${profile.username} as a friend!`);
+    await getCurrentFriendshipSender();
+    await getCurrentFriendshipReceiver();
+  };
+
   const getCurrentFriendshipSender = useCallback(async () => {
     const results = await getFriendshipSender(id);
+    console.log(results);
     if (results !== undefined) {
       setFriendshipSender(results);
       setFriendshipId(results.id);
@@ -87,9 +100,9 @@ const UserProfile = () => {
 
   return (
     <div className="container py-5">
-      {friendshipReceiver !== null && friendshipReceiver.status === "Pending"
-        ? ` ${profile.username} Sended you a friend request`
-        : null}
+      {friendshipReceiver && (
+        <h5>{profile.username} send you a friend request</h5>
+      )}
       <div className="row  d-flex align-items-center">
         <div className="col-lg-7 ">
           <div className="mb-3  d-flex align-items-center py-5 shadow-lg">
@@ -101,44 +114,39 @@ const UserProfile = () => {
                 <div className="card-body">
                   <h5 className="card-title d-flex justify-content-between mb-4">
                     {profile.username}
-                    {friendshipSender !== null &&
-                    friendshipSender.status === "Pending" ? (
+
+                    {friendshipReceiver && !friendshipSender && (
+                      <button
+                        onClick={acceptAsFriendHandler}
+                        className="btn btn-purple btn-sm"
+                      >
+                        Accept as a friend
+                      </button>
+                    )}
+
+                    {friendshipSender && !friendshipReceiver && (
                       <button className="btn btn-purple btn-sm">
                         Response pending
                       </button>
-                    ) : null}
+                    )}
 
-                    {/* {friendshipSender !== null &&
-                    friendshipSender.status === "Friends" ? (
-                      <button
-                        onClick={removeAsFriendHandler}
-                        className="btn btn-purple btn-sm"
-                      >
-                        <i className="fas fa-check"></i> Friends
-                      </button>
-                    ) : null} */}
-
-                    {friendshipReceiver !== null &&
-                    friendshipReceiver.status === "Friends" ? (
-                      <button
-                        onClick={removeAsFriendHandler}
-                        className="btn btn-purple btn-sm"
-                      >
-                        <i className="fas fa-check"></i>
-                        Friends
-                      </button>
-                    ) : friendshipSender === null ? (
+                    {!friendshipSender && !friendshipReceiver && (
                       <button
                         onClick={addAsFriendHandler}
                         className="btn btn-purple btn-sm"
                       >
-                        <i className="fas fa-user"></i>{" "}
-                        {friendshipReceiver !== null &&
-                        friendshipReceiver.status === "Pending"
-                          ? `Accept request`
-                          : `Add to friend list`}
+                        <i className="fas fa-user"></i> Add to friend list
                       </button>
-                    ) : null}
+                    )}
+
+                    {friendshipSender && friendshipReceiver && (
+                      <button
+                        onClick={removeAsFriendHandler}
+                        className="btn btn-purple btn-sm"
+                      >
+                        <i className="fas fa-user"></i> Friends
+                      </button>
+                    )}
                   </h5>
                   <p className="card-text">
                     Hi, my full name is {profile.fullname} and i have readed{" "}

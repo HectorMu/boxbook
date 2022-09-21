@@ -65,7 +65,8 @@ const BookInCatalog = ({ book, refresh }) => {
 
   useEffect(() => {
     getCurrentAdvance();
-    handleChange("fk_book", book.id);
+
+    setNewAdvance((prev) => ({ ...prev, fk_book: book.id }));
     if (book.score !== 0) {
       setRated(book.score);
     }
