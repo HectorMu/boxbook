@@ -10,6 +10,7 @@ const Index = () => {
           <img
             src="https://freesvg.org/img/CrazyTerabyte_Book.png"
             height={180}
+            alt="Welcome"
           />
           <h1
             data-aos="fade-up"

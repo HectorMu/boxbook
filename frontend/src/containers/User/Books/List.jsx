@@ -22,12 +22,12 @@ const List = () => {
     const readingBooks = books.filter((b) => b.status === "Reading");
     const readBooks = books.filter((b) => b.status === "Read");
 
-    setBooksCat({
-      ...booksArrays,
+    setBooksCat((prev) => ({
+      ...prev,
       pending: pendingBooks,
       reading: readingBooks,
       read: readBooks,
-    });
+    }));
   }, [books]);
 
   useEffect(() => {

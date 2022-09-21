@@ -15,11 +15,12 @@ import TruncatedText from "../../components/Global/TruncatedText";
 import CatalogCommentaries from "../../containers/User/Social/CatalogCommentaries";
 import UserOwnCommentary from "../../containers/User/Social/UserOwnCommentary";
 import toast from "react-hot-toast";
+import useSession from "../../hooks/useSession";
 
 const UserProfile = () => {
+  const { socket, user } = useSession() || {};
   const [profile, setProfile] = useState({});
   const [catalog, setCatalog] = useState([]);
-  const [friendshipId, setFriendshipId] = useState(0);
   const [friendshipSender, setFriendshipSender] = useState(null);
   const [friendshipReceiver, setFriendshipReceiver] = useState(null);
   const navigate = useNavigate();
@@ -30,6 +31,7 @@ const UserProfile = () => {
     if (!results.status) {
       return toast.error(results.statusText);
     }
+    socket.emit("add-friend", id);
     toast.success(`Added as a friend, wait for ${profile.username} response`);
     await getCurrentFriendshipSender();
     await getCurrentFriendshipReceiver();
@@ -50,6 +52,7 @@ const UserProfile = () => {
     if (!results.status) {
       return toast.error(results.statusText);
     }
+    socket.emit("accepted-request", user.id);
     toast.success(`Accepted ${profile.username} as a friend!`);
     await getCurrentFriendshipSender();
     await getCurrentFriendshipReceiver();
@@ -60,7 +63,7 @@ const UserProfile = () => {
     console.log(results);
     if (results !== undefined) {
       setFriendshipSender(results);
-      setFriendshipId(results.id);
+
       return;
     }
     setFriendshipSender(null);
@@ -70,7 +73,7 @@ const UserProfile = () => {
     const results = await getFriendshipReceiver(id);
     if (results !== undefined) {
       setFriendshipReceiver(results);
-      setFriendshipId(results.id);
+
       return;
     }
     setFriendshipReceiver(null);

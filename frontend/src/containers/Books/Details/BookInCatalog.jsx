@@ -27,6 +27,9 @@ const BookInCatalog = ({ book, refresh }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    if (newAdvance.pagesReaded === 0)
+      return toast.error("Provide a real advance");
+
     const results = await saveNewAdvance(newAdvance);
     console.log(results);
     if (!results.status) {
@@ -114,7 +117,7 @@ const BookInCatalog = ({ book, refresh }) => {
               setValue={(e) =>
                 handleChange("pagesReaded", parseInt(e.target.value))
               }
-              value={newAdvance.pagesReaded}
+              value={bookAdvance}
             />
             <textarea
               placeholder="Commentary"

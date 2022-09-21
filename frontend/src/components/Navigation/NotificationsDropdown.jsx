@@ -1,21 +1,30 @@
 import React, { useState, useEffect } from "react";
 import { getSolitudes } from "../../services/user";
 import { Link } from "react-router-dom";
+import useSession from "../../hooks/useSession";
 
 const NotificationsDropdown = () => {
+  const { socket } = useSession() || {};
   const [notifications, setNotifications] = useState([]);
 
   const getNotificationsHandler = async () => {
     const fetchedNotifications = await getSolitudes();
+    console.log(fetchedNotifications);
     setNotifications(fetchedNotifications);
   };
 
-  // setTimeout(async () => {
-  //   await getNotificationsHandler();
-  // }, 1500);
   useEffect(() => {
+    socket &&
+      socket.on("friend-request", () => {
+        getNotificationsHandler();
+      });
+    socket &&
+      socket.on("refresh-notifications", () => {
+        getNotificationsHandler();
+      });
     getNotificationsHandler();
-  }, []);
+    return () => socket && socket.close();
+  }, [socket]);
   return (
     <div className="dropdown">
       {notifications.length > 0 ? (

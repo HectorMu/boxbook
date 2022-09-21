@@ -1,6 +1,6 @@
 import Aos from "aos";
 import "../../node_modules/aos/dist/aos.css";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import "../../node_modules/bootstrap/dist/css/bootstrap.min.css";
 import "../../node_modules/bootstrap/dist/js/bootstrap.min.js";
 import "./css/main.css";
@@ -13,12 +13,10 @@ import IsAlreadyLogged from "./components/Authentication/IsAlreadyLogged";
 import Index from "./pages/Index";
 
 function App() {
-  function scrollTop() {
-    window.scrollTo(0, 0);
-  }
   useEffect(() => {
     Aos.init();
   }, []);
+
   return (
     <div>
       <SessionContextProvider>
@@ -30,7 +28,6 @@ function App() {
                 key={route.path}
                 path={route.path}
                 element={route.element}
-                preload={scrollTop}
               />
             ))}
           </Routes>

@@ -14,6 +14,9 @@ const List = () => {
         <Loading text="purple" />
       ) : (
         <div id="users-section" className="row">
+          {localUsers.length === 0 && (
+            <h5>We don't found any user based on your location</h5>
+          )}
           {localUsers.map((user) => (
             <div
               key={user.id + user.username}

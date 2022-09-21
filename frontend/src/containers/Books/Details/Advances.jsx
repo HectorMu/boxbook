@@ -6,7 +6,6 @@ import {
   setBookToRead,
 } from "../../../services/books";
 import Canvas from "../../../components/Global/Canvas";
-import AdvancesList from "../../../components/Books/AdvancesList";
 import FloatingLabelInput from "../../../components/Global/FloatingLabelInput";
 import AdvanceModel from "../../../Models/Books/AdvanceModel";
 import BookReadModel from "../../../Models/Books/BookReadModel";
@@ -35,6 +34,9 @@ const Advances = ({ book, onCatalogBook, refresh }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (parseInt(newAdvance.pagesReaded) === 0)
+      return toast.error("Add a valid advance");
 
     if (newAdvance.pagesReaded === book.pageCount) {
       const results = await setBookToRead(finishedReading);
@@ -176,7 +178,12 @@ const Advances = ({ book, onCatalogBook, refresh }) => {
           {currentAdvance.pagesReaded}/{book.pageCount} pages
         </h6>
         <div className="d-flex gap-2">
-          <h5>Commentary:</h5> <h5>{currentAdvance.commentary}</h5>
+          <h5>Commentary:</h5>{" "}
+          <h5>
+            {currentAdvance.commentary === ""
+              ? "No comentary"
+              : currentAdvance.commentary}
+          </h5>
         </div>
       </div>
 
@@ -197,7 +204,11 @@ const Advances = ({ book, onCatalogBook, refresh }) => {
               </button>
             </p>
             <div className="collapse mb-3" id={`collapseAdvance${advance.id}`}>
-              <div className="card card-body">{advance.commentary}</div>
+              <div className="card card-body">
+                {advance.commentary === ""
+                  ? "No commentary"
+                  : advance.commentary}
+              </div>
             </div>
           </div>
         ))}

@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { Link, useNavigate } from "react-router-dom";
 //Importing custom components
 import FloatingLabelInput from "../../../components/Global/FloatingLabelInput";
 //Importing hooks

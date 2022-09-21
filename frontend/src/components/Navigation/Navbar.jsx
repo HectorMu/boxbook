@@ -6,27 +6,30 @@ import { getBooks } from "../../services/google.apis.books";
 import Loading from "../Global/Loading";
 //import MessagesDropdown from "./MessagesDropdown";
 import NotificationsDropdown from "./NotificationsDropdown";
+import { DebounceInput } from "react-debounce-input";
+import { useCallback } from "react";
+import { useEffect } from "react";
 
 const Navbar = ({ setIsActive, isActive }) => {
-  const { user, setUser } = useSession();
+  const { user, setUser, socket } = useSession() || {};
 
   const navigate = useNavigate();
   const [books, setBooks] = useState([]);
   const [searchTitle, setSearchTitle] = useState("");
   const [IsLoading, setIsLoading] = useState(false);
 
-  const searchHandler = async (title) => {
-    setSearchTitle(title);
-    if (title === "") {
+  const getFoundedBooks = useCallback(async () => {
+    if (searchTitle === "") {
       setBooks([]);
       return;
     }
     setIsLoading(true);
     setBooks([]);
-    const fetchedBooks = await getBooks(title.toLowerCase());
+
+    const fetchedBooks = await getBooks(searchTitle.toLowerCase());
     setBooks(fetchedBooks);
     setIsLoading(false);
-  };
+  }, [searchTitle]);
 
   const handleResultsClose = () => {
     setBooks([]);
@@ -38,6 +41,10 @@ const Navbar = ({ setIsActive, isActive }) => {
     setUser(null);
     navigate("/login");
   };
+
+  useEffect(() => {
+    getFoundedBooks();
+  }, [getFoundedBooks]);
 
   return (
     <nav className={`navbar navbar-expand-lg navbar-dark bg-coffee`}>
@@ -67,12 +74,13 @@ const Navbar = ({ setIsActive, isActive }) => {
                   <button className="btn btn-purple">
                     <i className=" fas fa-search"></i>
                   </button>
-                  <input
+                  <DebounceInput
+                    debounceTimeout={500}
                     type="text"
                     className="form-control"
                     placeholder="Search books"
-                    onChange={(e) => searchHandler(e.target.value)}
-                    onFocus={(e) => searchHandler(e.target.value)}
+                    onChange={(e) => setSearchTitle(e.target.value)}
+                    onFocus={(e) => setSearchTitle(e.target.value)}
                     value={searchTitle}
                   />
 
@@ -162,7 +170,7 @@ const Navbar = ({ setIsActive, isActive }) => {
                 >
                   <span className="d-none d-sm-inline-block d-md-inline-block d-lg-inline-block d-xl-inline-block d-xxl-inline-block">
                     {user.username}
-                  </span>
+                  </span>{" "}
                   <i className="fas fa-user"></i>
                 </button>
                 <ul

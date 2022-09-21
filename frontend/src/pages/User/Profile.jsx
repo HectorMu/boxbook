@@ -1,5 +1,6 @@
 import React from "react";
 import EditForm from "../../containers/User/Profile/EditForm";
+import useSession from "../../hooks/useSession";
 
 const Profile = () => {
   return (

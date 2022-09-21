@@ -26,6 +26,9 @@ const AddToCatalog = ({ book = null, refresh }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    if (bookToAdd.status === "Reading" && bookToAdd.pagesReaded === 0)
+      return toast.error("Provide a real advance");
+
     const tLoading = toast.loading("Adding...");
     const results = await addBookToCatalog(bookToAdd);
     console.log(results);
@@ -41,22 +44,21 @@ const AddToCatalog = ({ book = null, refresh }) => {
 
   useEffect(() => {
     if (bookToAdd.status === "Pending" || bookToAdd.status === "Reading") {
-      setBookToAdd({ ...bookToAdd, score: 0, review: "" });
+      setBookToAdd((prev) => ({ ...prev, score: 0, review: "" }));
     }
-    //! Disabled cause i only want to execute this effect when book to add status changes
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [bookToAdd.status]);
 
   useEffect(() => {
     setBookToAdd({
       ...bookModel,
-      title: book.title,
-      publisher: book.publisher,
-      pageCount: book.pageCount,
-      author: book.authors && book.authors.length > 0 ? book.authors[0] : null,
-      publishedDate: book.publishedDate,
+      title: book?.title,
+      publisher: book?.publisher,
+      pageCount: book?.pageCount,
+      author:
+        book?.authors && book?.authors.length > 0 ? book?.authors[0] : null,
+      publishedDate: book?.publishedDate,
       thumbnail:
-        book.imageLinks && book.imageLinks.thumbnail
+        book?.imageLinks && book?.imageLinks.thumbnail
           ? book.imageLinks.thumbnail
           : null,
     });
@@ -81,26 +83,18 @@ const AddToCatalog = ({ book = null, refresh }) => {
           <option value="Read">Read</option>
         </select>
         <div className="d-flex gap-4">
-          <img
-            src={
-              book.imageLinks && book.imageLinks.thumbnail
-                ? book.imageLinks.thumbnail
-                : null
-            }
-            alt=""
-            className="h-100"
-          />
+          <img src={book?.imageLinks?.thumbnail} alt="" className="h-100" />
 
           <div>
-            <p className="fw-bold">{book.title}</p>
+            <p className="fw-bold">{book?.title}</p>
             <p>
               by:{" "}
-              {book.authors && book.authors.length > 0
-                ? book.authors[0]
+              {book?.authors && book.authors.length > 0
+                ? book?.authors[0]
                 : "Loading.."}
             </p>
-            <p>Published by: {book.publisher}</p>
-            <p>Released: {book.publishedDate}</p>
+            <p>Published by: {book?.publisher}</p>
+            <p>Released: {book?.publishedDate}</p>
           </div>
         </div>
 

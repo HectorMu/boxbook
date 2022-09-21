@@ -33,7 +33,7 @@ controller.acceptFriend = async (req, res) => {
   const solitudeToAccept = {
     sender: req.user.id,
     receiver: sender,
-    status: "Pending",
+    status: "Friends",
   };
 
   try {
@@ -50,6 +50,10 @@ controller.acceptFriend = async (req, res) => {
         [sender, req.user.id, req.user.id, sender]
       );
     }
+    await connection.query(
+      "update friendship set status = 'Friends' where sender  = ? && receiver = ? || receiver = ? && sender = ? ",
+      [sender, req.user.id, req.user.id, sender]
+    );
     res.json({ status: true, statusText: "Solitude accepted!" });
   } catch (error) {
     console.log(error);
