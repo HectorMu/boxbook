@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import toast from "react-hot-toast";
 import io from "socket.io-client";
 
 export const Session = React.createContext();
@@ -17,6 +18,14 @@ function SessionContextProvider({ children }) {
   useEffect(() => {
     if (!user) return;
     socket && socket.emit("subscription", JSON.stringify(user));
+  }, [socket, user]);
+
+  useEffect(() => {
+    if (!user) return;
+    socket &&
+      socket.on("solitude-accepted", (username) => {
+        toast.success(`${username} accepted your friend request`);
+      });
   }, [socket, user]);
 
   return (

@@ -52,7 +52,11 @@ const UserProfile = () => {
     if (!results.status) {
       return toast.error(results.statusText);
     }
-    socket.emit("accepted-request", user.id);
+    socket.emit("accepted-request", {
+      receiver: user.id,
+      sender: id,
+      username: user.username,
+    });
     toast.success(`Accepted ${profile.username} as a friend!`);
     await getCurrentFriendshipSender();
     await getCurrentFriendshipReceiver();

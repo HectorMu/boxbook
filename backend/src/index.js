@@ -75,8 +75,6 @@ io.on("connection", (socket) => {
   });
 
   socket.on("add-friend", async (to) => {
-    console.log("adding friend");
-
     const getSocketId = await db.query(
       "select * from sockets where fk_user = ?",
       [to]
@@ -85,13 +83,19 @@ io.on("connection", (socket) => {
 
     io.to(socketId).emit("friend-request");
   });
-  socket.on("accepted-request", async (id) => {
-    const getSocketId = await db.query(
+  socket.on("accepted-request", async (payload) => {
+    const getReceiverSocketId = await db.query(
       "select * from sockets where fk_user = ?",
-      [id]
+      [payload.receiver]
     );
-    const socketId = getSocketId[0].current_socket;
-    io.to(socketId).emit("refresh-notifications");
+    const receiverSocketId = getReceiverSocketId[0].current_socket;
+    const getSenderSocketId = await db.query(
+      "select * from sockets where fk_user = ?",
+      [payload.sender]
+    );
+    const senderSocketId = getSenderSocketId[0].current_socket;
+    io.to(receiverSocketId).emit("refresh-notifications");
+    io.to(senderSocketId).emit("solitude-accepted", payload.username);
   });
 });
 
