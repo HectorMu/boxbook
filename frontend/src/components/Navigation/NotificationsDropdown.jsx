@@ -14,14 +14,13 @@ const NotificationsDropdown = () => {
   };
 
   useEffect(() => {
-    socket &&
-      socket.on("friend-request", () => {
-        getNotificationsHandler();
-      });
-    socket &&
-      socket.on("refresh-notifications", () => {
-        getNotificationsHandler();
-      });
+    socket.on("friend-request", () => {
+      getNotificationsHandler();
+    });
+
+    socket.on("refresh-notifications", () => {
+      getNotificationsHandler();
+    });
     getNotificationsHandler();
     return () => socket && socket.close();
   }, [socket]);

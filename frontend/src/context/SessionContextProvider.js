@@ -2,31 +2,25 @@ import React, { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import io from "socket.io-client";
 
+const newSocket = io(`http://localhost:4000`);
+
 export const Session = React.createContext();
 function SessionContextProvider({ children }) {
-  const [socket, setSocket] = useState(null);
+  const [socket] = useState(newSocket);
   const userData = JSON.parse(window.localStorage.getItem("BoxBookSession"));
   const [user, setUser] = useState(userData);
 
   useEffect(() => {
-    const newSocket = io(`http://localhost:4000`);
-    setSocket(newSocket);
+    if (!user) return;
+
+    socket.emit("subscription", JSON.stringify(user));
+
+    socket.on("solitude-accepted", (username) => {
+      toast.success(`${username} accepted your friend request`);
+    });
 
     return () => newSocket.close();
-  }, [user]);
-
-  useEffect(() => {
-    if (!user) return;
-    socket && socket.emit("subscription", JSON.stringify(user));
-  }, [socket, user]);
-
-  useEffect(() => {
-    if (!user) return;
-    socket &&
-      socket.on("solitude-accepted", (username) => {
-        toast.success(`${username} accepted your friend request`);
-      });
-  }, [socket, user]);
+  }, [user, socket]);
 
   return (
     <Session.Provider value={{ user, setUser, socket }}>
