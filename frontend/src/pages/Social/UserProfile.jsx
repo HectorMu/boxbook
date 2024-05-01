@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from 'react'
 import {
   getUserProfile,
   getUserCatalog,
@@ -6,109 +6,109 @@ import {
   getFriendshipSender,
   getFriendshipReceiver,
   removeFriend,
-  acceptFriend,
-} from "../../services/social";
-import { useParams } from "react-router-dom";
-import { useNavigate } from "react-router-dom";
-import TruncatedText from "../../components/Global/TruncatedText";
+  acceptFriend
+} from '../../services/social'
+import { useParams } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
+import TruncatedText from '../../components/Global/TruncatedText'
 
-import CatalogCommentaries from "../../containers/User/Social/CatalogCommentaries";
-import UserOwnCommentary from "../../containers/User/Social/UserOwnCommentary";
-import toast from "react-hot-toast";
-import useSession from "../../hooks/useSession";
+import CatalogCommentaries from '../../containers/User/Social/CatalogCommentaries'
+import UserOwnCommentary from '../../containers/User/Social/UserOwnCommentary'
+import toast from 'react-hot-toast'
+import useSession from '../../hooks/useSession'
 
 const UserProfile = () => {
-  const { socket, user } = useSession() || {};
-  const [profile, setProfile] = useState({});
-  const [catalog, setCatalog] = useState([]);
-  const [friendshipSender, setFriendshipSender] = useState(null);
-  const [friendshipReceiver, setFriendshipReceiver] = useState(null);
-  const navigate = useNavigate();
-  const { id } = useParams();
+  const { socket, user } = useSession() || {}
+  const [profile, setProfile] = useState({})
+  const [catalog, setCatalog] = useState([])
+  const [friendshipSender, setFriendshipSender] = useState(null)
+  const [friendshipReceiver, setFriendshipReceiver] = useState(null)
+  const navigate = useNavigate()
+  const { id } = useParams()
 
   const addAsFriendHandler = async () => {
-    const results = await addAsFriend(id);
+    const results = await addAsFriend(id)
     if (!results.status) {
-      return toast.error(results.statusText);
+      return toast.error(results.statusText)
     }
-    socket.emit("add-friend", id);
-    toast.success(`Added as a friend, wait for ${profile.username} response`);
-    await getCurrentFriendshipSender();
-    await getCurrentFriendshipReceiver();
-  };
+    socket.emit('add-friend', id)
+    toast.success(`Added as a friend, wait for ${profile.username} response`)
+    await getCurrentFriendshipSender()
+    await getCurrentFriendshipReceiver()
+  }
 
   const removeAsFriendHandler = async () => {
-    const results = await removeFriend(id);
+    const results = await removeFriend(id)
     if (!results.status) {
-      return toast.error(results.statusText);
+      return toast.error(results.statusText)
     }
-    toast.success(`Removed ${profile.username} as a friend`);
-    await getCurrentFriendshipSender();
-    await getCurrentFriendshipReceiver();
-  };
+    toast.success(`Removed ${profile.username} as a friend`)
+    await getCurrentFriendshipSender()
+    await getCurrentFriendshipReceiver()
+  }
 
   const acceptAsFriendHandler = async () => {
-    const results = await acceptFriend(id);
+    const results = await acceptFriend(id)
     if (!results.status) {
-      return toast.error(results.statusText);
+      return toast.error(results.statusText)
     }
-    socket.emit("accepted-request", {
+    socket.emit('accepted-request', {
       receiver: user.id,
       sender: id,
-      username: user.username,
-    });
-    toast.success(`Accepted ${profile.username} as a friend!`);
-    await getCurrentFriendshipSender();
-    await getCurrentFriendshipReceiver();
-  };
+      username: user.username
+    })
+    toast.success(`Accepted ${profile.username} as a friend!`)
+    await getCurrentFriendshipSender()
+    await getCurrentFriendshipReceiver()
+  }
 
   const getCurrentFriendshipSender = useCallback(async () => {
-    const results = await getFriendshipSender(id);
-    console.log(results);
+    const results = await getFriendshipSender(id)
+    console.log(results)
     if (results !== undefined) {
-      setFriendshipSender(results);
+      setFriendshipSender(results)
 
-      return;
+      return
     }
-    setFriendshipSender(null);
-  }, [id]);
+    setFriendshipSender(null)
+  }, [id])
 
   const getCurrentFriendshipReceiver = useCallback(async () => {
-    const results = await getFriendshipReceiver(id);
+    const results = await getFriendshipReceiver(id)
     if (results !== undefined) {
-      setFriendshipReceiver(results);
+      setFriendshipReceiver(results)
 
-      return;
+      return
     }
-    setFriendshipReceiver(null);
-  }, [id]);
+    setFriendshipReceiver(null)
+  }, [id])
 
   const getProfileHandler = useCallback(async () => {
-    const fetchedProfile = await getUserProfile(id);
-    setProfile(fetchedProfile);
-  }, [id]);
+    const fetchedProfile = await getUserProfile(id)
+    setProfile(fetchedProfile)
+  }, [id])
 
   const getCatalogHandler = useCallback(async () => {
-    const fetchedCatalog = await getUserCatalog(id);
-    setCatalog(fetchedCatalog);
-  }, [id]);
+    const fetchedCatalog = await getUserCatalog(id)
+    setCatalog(fetchedCatalog)
+  }, [id])
 
   useEffect(() => {
-    getProfileHandler();
-    getCatalogHandler();
-    getCurrentFriendshipSender();
-    getCurrentFriendshipReceiver();
+    getProfileHandler()
+    getCatalogHandler()
+    getCurrentFriendshipSender()
+    getCurrentFriendshipReceiver()
   }, [
     getProfileHandler,
     getCatalogHandler,
     getCurrentFriendshipSender,
-    getCurrentFriendshipReceiver,
-  ]);
+    getCurrentFriendshipReceiver
+  ])
 
   return (
     <div className="container py-5">
       {friendshipReceiver && (
-        <h5>{profile.username} send you a friend request</h5>
+        <h5>{profile.username} sent you a friend request</h5>
       )}
       <div className="row  d-flex align-items-center">
         <div className="col-lg-7 ">
@@ -156,13 +156,13 @@ const UserProfile = () => {
                     )}
                   </h5>
                   <p className="card-text">
-                    Hi, my full name is {profile.fullname} and i have readed{" "}
+                    Hi, my full name is {profile.fullname} and i have readed{' '}
                     {profile.booksReaded} books.
                   </p>
                   <div className="card-text d-flex justify-content-between">
                     <small className="text-muted">{profile.email}</small>
                     <div>
-                      <small className="text-muted">{profile.country}</small> -{" "}
+                      <small className="text-muted">{profile.country}</small> -{' '}
                       <small className="text-muted">{profile.city}</small>
                     </div>
                   </div>
@@ -188,7 +188,7 @@ const UserProfile = () => {
                     <div
                       onClick={() => navigate(`/books/details/${book.title}`)}
                       className="card w-50"
-                      style={{ cursor: "pointer" }}
+                      style={{ cursor: 'pointer' }}
                     >
                       <img
                         src={book.thumbnail}
@@ -227,7 +227,7 @@ const UserProfile = () => {
       <UserOwnCommentary profile={profile} />
       <CatalogCommentaries profile={profile} />
     </div>
-  );
-};
+  )
+}
 
-export default UserProfile;
+export default UserProfile
