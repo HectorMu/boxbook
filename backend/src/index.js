@@ -42,62 +42,81 @@ const io = new Server(server, {
   }
 })
 
-// io.on("connection", (socket) => {
-//   socket.on("subscription", async (user) => {
-//     const userData = JSON.parse(user);
+io.on('connection', (socket) => {
+  socket.on('subscription', async (user) => {
+    const userData = JSON.parse(user)
 
-//     const token = userData.AccessToken;
+    const token = userData.AccessToken
 
-//     const decodedAccessToken = jwt.verify(
-//       token,
-//       process.env.ACCESS_TOKEN_SECRET
-//     );
+    const decodedAccessToken = jwt.verify(
+      token,
+      process.env.ACCESS_TOKEN_SECRET
+    )
 
-//     const decodedUser = decodedAccessToken;
-//     const hasAlreayRegistered = await db.query(
-//       "select * from sockets where fk_user = ?",
-//       [decodedUser.id]
-//     );
+    const decodedUser = decodedAccessToken
+    const hasAlreayRegistered = await db.query(
+      'select * from sockets where fk_user = ?',
+      [decodedUser.id]
+    )
 
-//     if (hasAlreayRegistered.length > 0) {
-//       await db.query(
-//         "update sockets set current_socket = ? where fk_user = ?",
-//         [socket.id, decodedUser.id]
-//       );
-//     } else {
-//       const newSocket = {
-//         fk_user: decodedUser.id,
-//         current_socket: socket.id,
-//       };
+    if (hasAlreayRegistered.length > 0) {
+      await db.query(
+        'update sockets set current_socket = ? where fk_user = ?',
+        [socket.id, decodedUser.id]
+      )
+    } else {
+      const newSocket = {
+        fk_user: decodedUser.id,
+        current_socket: socket.id
+      }
 
-//       await db.query("insert into sockets set ?", [newSocket]);
-//     }
-//   });
+      await db.query('insert into sockets set ?', [newSocket])
+    }
+  })
 
-//   socket.on("add-friend", async (to) => {
-//     const getSocketId = await db.query(
-//       "select * from sockets where fk_user = ?",
-//       [to]
-//     );
-//     const socketId = getSocketId[0].current_socket;
+  socket.on('add-friend', async (to) => {
+    const getSocketId = await db.query(
+      'select * from sockets where fk_user = ?',
+      [to]
+    )
+    const socketId = getSocketId?.[0]?.current_socket
 
-//     io.to(socketId).emit("friend-request");
-//   });
-//   socket.on("accepted-request", async (payload) => {
-//     const getReceiverSocketId = await db.query(
-//       "select * from sockets where fk_user = ?",
-//       [payload.receiver]
-//     );
-//     const receiverSocketId = getReceiverSocketId[0].current_socket;
-//     const getSenderSocketId = await db.query(
-//       "select * from sockets where fk_user = ?",
-//       [payload.sender]
-//     );
-//     const senderSocketId = getSenderSocketId[0].current_socket;
-//     io.to(receiverSocketId).emit("refresh-notifications");
-//     io.to(senderSocketId).emit("solitude-accepted", payload.username);
-//   });
-// });
+    if (socketId) {
+      io.to(socketId).emit('friend-request')
+    }
+  })
+  socket.on('accepted-request', async (payload) => {
+    const getReceiverSocketId = await db.query(
+      'select * from sockets where fk_user = ?',
+      [payload.receiver]
+    )
+    const receiverSocketId = getReceiverSocketId[0].current_socket
+
+    const getSenderSocketId = await db.query(
+      'select * from sockets where fk_user = ?',
+      [payload.sender]
+    )
+    const senderSocketId = getSenderSocketId[0].current_socket
+    io.to(receiverSocketId).emit('refresh-notifications')
+    io.to(senderSocketId).emit('solitude-accepted', payload.username)
+  })
+
+  socket.on('deleted-request', async (payload) => {
+    const getReceiverSocketId = await db.query(
+      'select * from sockets where fk_user = ?',
+      [payload.receiver]
+    )
+    const receiverSocketId = getReceiverSocketId[0].current_socket
+
+    const getSenderSocketId = await db.query(
+      'select * from sockets where fk_user = ?',
+      [payload.sender]
+    )
+    const senderSocketId = getSenderSocketId[0].current_socket
+    io.to(receiverSocketId).emit('refresh-notifications')
+    io.to(senderSocketId).emit('solitude-deleted', payload.username)
+  })
+})
 
 //Initialazing the server
 let port = process.env.PORT || 4000

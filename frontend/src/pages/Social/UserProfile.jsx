@@ -25,6 +25,7 @@ const UserProfile = () => {
   const [friendshipReceiver, setFriendshipReceiver] = useState(null)
   const navigate = useNavigate()
   const { id } = useParams()
+  const [isPendingHovered, setIsPendingHovered] = useState(false)
 
   const addAsFriendHandler = async () => {
     const results = await addAsFriend(id)
@@ -32,17 +33,30 @@ const UserProfile = () => {
       return toast.error(results.statusText)
     }
     socket.emit('add-friend', id)
-    toast.success(`Added as a friend, wait for ${profile.username} response`)
+    toast.success(
+      `Sent friendship solitude, wait for ${profile.username} response`
+    )
     await getCurrentFriendshipSender()
     await getCurrentFriendshipReceiver()
   }
+
+  const isResponsePending = friendshipSender && !friendshipReceiver
 
   const removeAsFriendHandler = async () => {
     const results = await removeFriend(id)
     if (!results.status) {
       return toast.error(results.statusText)
     }
-    toast.success(`Removed ${profile.username} as a friend`)
+    if (isResponsePending) {
+      toast.success(`Friendship solitude deleted`)
+      socket.emit('deleted-request', {
+        receiver: user.id,
+        sender: id,
+        username: user.username
+      })
+    } else {
+      toast.success(`Removed ${profile.username} as a friend`)
+    }
     await getCurrentFriendshipSender()
     await getCurrentFriendshipReceiver()
   }
@@ -105,6 +119,26 @@ const UserProfile = () => {
     getCurrentFriendshipReceiver
   ])
 
+  useEffect(() => {
+    if (!user) return
+
+    socket.emit('subscription', JSON.stringify(user))
+
+    socket.on('solitude-accepted', () => {
+      getCurrentFriendshipSender()
+      getCurrentFriendshipReceiver()
+    })
+
+    socket.on('friend-request', () => {
+      getCurrentFriendshipSender()
+      getCurrentFriendshipReceiver()
+    })
+    socket.on('solitude-deleted', () => {
+      getCurrentFriendshipSender()
+      getCurrentFriendshipReceiver()
+    })
+  }, [user, socket, getCurrentFriendshipReceiver, getCurrentFriendshipSender])
+
   return (
     <div className="container py-5">
       {friendshipReceiver && (
@@ -132,8 +166,20 @@ const UserProfile = () => {
                     )}
 
                     {friendshipSender && !friendshipReceiver && (
-                      <button className="btn btn-purple btn-sm">
-                        Response pending
+                      <button
+                        onMouseEnter={() => setIsPendingHovered(true)}
+                        onMouseLeave={() => setIsPendingHovered(false)}
+                        onClick={removeAsFriendHandler}
+                        className="btn btn-purple btn-sm"
+                      >
+                        {isPendingHovered ? (
+                          <>
+                            Delete frienship solitude{' '}
+                            <i className="fas fa-trash-alt"></i>
+                          </>
+                        ) : (
+                          'Response pending'
+                        )}
                       </button>
                     )}
 
@@ -171,58 +217,74 @@ const UserProfile = () => {
             </div>
           </div>
         </div>
-        <div className="col-lg-5">
-          <h4 className="text-center fw-bold">My books</h4>
-          <div
-            id="carouselExampleDark"
-            className="carousel carousel-dark slide"
-            data-bs-ride="carousel"
-          >
-            <div className="carousel-inner">
-              {catalog.map((book, i) => (
-                <div
-                  key={i}
-                  className={`carousel-item   ${i === 0 ? `active` : ``}`}
-                >
-                  <div className="d-flex justify-content-center w-100">
-                    <div
-                      onClick={() => navigate(`/books/details/${book.title}`)}
-                      className="card w-50"
-                      style={{ cursor: 'pointer' }}
-                    >
-                      <img
-                        src={book.thumbnail}
-                        className="card-img-top "
-                        alt="..."
-                      />
-                      <div className="card-body d-flex justify-content-center flex-column">
-                        <TruncatedText text={book.title} minimunLength={26} />
+        {catalog.length > 0 ? (
+          <div className="col-lg-5">
+            <h4 className="text-center fw-bold">My books</h4>
+            <div
+              id="carouselExampleDark"
+              className="carousel carousel-dark slide"
+              data-bs-ride="carousel"
+            >
+              <div className="carousel-inner">
+                {catalog.map((book, i) => (
+                  <div
+                    key={i}
+                    className={`carousel-item   ${i === 0 ? `active` : ``}`}
+                  >
+                    <div className="d-flex justify-content-center w-100">
+                      <div
+                        onClick={() => navigate(`/books/details/${book.title}`)}
+                        className="card w-50"
+                        style={{ cursor: 'pointer' }}
+                      >
+                        <img
+                          src={book.thumbnail}
+                          className="card-img-top "
+                          alt="..."
+                        />
+                        <div className="card-body d-flex justify-content-center flex-column">
+                          <TruncatedText text={book.title} minimunLength={26} />
+                        </div>
                       </div>
                     </div>
                   </div>
-                </div>
-              ))}
+                ))}
+              </div>
+              <button
+                className="carousel-control-prev ms-0 ms-lg-5"
+                type="button"
+                data-bs-target="#carouselExampleDark"
+                data-bs-slide="prev"
+              >
+                <span
+                  className="carousel-control-prev-icon"
+                  aria-hidden="true"
+                />
+                <span className="visually-hidden">Previous</span>
+              </button>
+              <button
+                className="carousel-control-next me-0 me-lg-5"
+                type="button"
+                data-bs-target="#carouselExampleDark"
+                data-bs-slide="next"
+              >
+                <span
+                  className="carousel-control-next-icon"
+                  aria-hidden="true"
+                />
+                <span className="visually-hidden">Next</span>
+              </button>
             </div>
-            <button
-              className="carousel-control-prev ms-0 ms-lg-5"
-              type="button"
-              data-bs-target="#carouselExampleDark"
-              data-bs-slide="prev"
-            >
-              <span className="carousel-control-prev-icon" aria-hidden="true" />
-              <span className="visually-hidden">Previous</span>
-            </button>
-            <button
-              className="carousel-control-next me-0 me-lg-5"
-              type="button"
-              data-bs-target="#carouselExampleDark"
-              data-bs-slide="next"
-            >
-              <span className="carousel-control-next-icon" aria-hidden="true" />
-              <span className="visually-hidden">Next</span>
-            </button>
           </div>
-        </div>
+        ) : (
+          <div className="col-lg-5">
+            <div className="card">
+              <div className="card-body">
+                {profile.fullname} has not added books yet
+              </div>
+            </div>
+          </div>
+        )}
       </div>
       <UserOwnCommentary profile={profile} />
       <CatalogCommentaries profile={profile} />

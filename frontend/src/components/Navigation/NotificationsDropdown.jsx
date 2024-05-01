@@ -13,15 +13,10 @@ const NotificationsDropdown = () => {
   }
 
   useEffect(() => {
-    socket.on('friend-request', () => {
-      getNotificationsHandler()
-    })
+    socket.on('friend-request', getNotificationsHandler)
 
-    socket.on('refresh-notifications', () => {
-      getNotificationsHandler()
-    })
+    socket.on('refresh-notifications', getNotificationsHandler)
     getNotificationsHandler()
-    return () => socket && socket.close()
   }, [socket])
   return (
     <div className="dropdown">

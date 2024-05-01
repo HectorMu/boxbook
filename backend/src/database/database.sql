@@ -177,6 +177,13 @@ CREATE TABLE `view_receivernotifications` (
 	`username` VARCHAR(100) NULL COLLATE 'latin1_swedish_ci'
 ) ENGINE=MyISAM;
 
+CREATE TABLE sockets(
+	id INT PRIMARY KEY AUTO_INCREMENT,
+	current_socket VARCHAR(20),
+	fk_user INT,
+	FOREIGN KEY (fk_user) REFERENCES users(id)
+)
+
 -- Volcando estructura para vista boxbook.view_catalogcommentaries
 -- Eliminando tabla temporal y crear estructura final de VIEW
 DROP TABLE IF EXISTS `view_catalogcommentaries`;
