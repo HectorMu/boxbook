@@ -1,14 +1,15 @@
 const bookModel = {
-  author: "",
-  title: "",
+  googleBookId: '',
+  author: '',
+  title: '',
   pageCount: 0,
-  thumbnail: "",
-  publisher: "",
-  publishedDate: "",
-  status: "Pending",
+  thumbnail: '',
+  publisher: '',
+  publishedDate: '',
+  status: 'Pending',
   score: 0,
-  review: "",
-  pagesReaded: 0,
-};
+  review: '',
+  pagesReaded: 0
+}
 
-export default bookModel;
+export default bookModel

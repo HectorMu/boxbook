@@ -1,6 +1,5 @@
-import React from "react";
-import EditForm from "../../containers/User/Profile/EditForm";
-import useSession from "../../hooks/useSession";
+import React from 'react'
+import EditForm from '../../containers/User/Profile/EditForm'
 
 const Profile = () => {
   return (
@@ -12,7 +11,7 @@ const Profile = () => {
         <EditForm />
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default Profile;
+export default Profile

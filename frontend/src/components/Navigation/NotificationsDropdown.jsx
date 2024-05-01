@@ -1,37 +1,36 @@
-import React, { useState, useEffect } from "react";
-import { getSolitudes } from "../../services/user";
-import { Link } from "react-router-dom";
-import useSession from "../../hooks/useSession";
+import React, { useState, useEffect } from 'react'
+import { getSolitudes } from '../../services/user'
+import { Link } from 'react-router-dom'
+import useSession from '../../hooks/useSession'
 
 const NotificationsDropdown = () => {
-  const { socket } = useSession() || {};
-  const [notifications, setNotifications] = useState([]);
+  const { socket } = useSession() || {}
+  const [notifications, setNotifications] = useState([])
 
   const getNotificationsHandler = async () => {
-    const fetchedNotifications = await getSolitudes();
-    console.log(fetchedNotifications);
-    setNotifications(fetchedNotifications);
-  };
+    const fetchedNotifications = await getSolitudes()
+    setNotifications(fetchedNotifications)
+  }
 
   useEffect(() => {
-    socket.on("friend-request", () => {
-      getNotificationsHandler();
-    });
+    socket.on('friend-request', () => {
+      getNotificationsHandler()
+    })
 
-    socket.on("refresh-notifications", () => {
-      getNotificationsHandler();
-    });
-    getNotificationsHandler();
-    return () => socket && socket.close();
-  }, [socket]);
+    socket.on('refresh-notifications', () => {
+      getNotificationsHandler()
+    })
+    getNotificationsHandler()
+    return () => socket && socket.close()
+  }, [socket])
   return (
     <div className="dropdown">
       {notifications.length > 0 ? (
         <span
           className="position-absolute  badge rounded-pill bg-purple"
-          style={{ top: "-4px", right: "0px", fontSize: "10px" }}
+          style={{ top: '-4px', right: '0px', fontSize: '10px' }}
         >
-          {notifications.length > 9 ? "9+" : notifications.length}
+          {notifications.length > 9 ? '9+' : notifications.length}
         </span>
       ) : null}
 
@@ -47,7 +46,7 @@ const NotificationsDropdown = () => {
       <ul
         className="dropdown-menu dropdown-menu-end dropd position-absolute px-2 py-2"
         aria-labelledby="dropdownMenuButton1"
-        style={{ width: "300px" }}
+        style={{ width: '300px' }}
       >
         {notifications.length > 0 ? (
           <>
@@ -64,12 +63,12 @@ const NotificationsDropdown = () => {
                       to={`/profile/${notification.sender}/${notification.username}`}
                       className="dropdown-item"
                     >
-                      <p style={{ fontSize: "15px", margin: "0px" }}>
+                      <p style={{ fontSize: '15px', margin: '0px' }}>
                         New friend request
                       </p>
                       <p
                         className="text-muted"
-                        style={{ fontSize: "13px", margin: "0px" }}
+                        style={{ fontSize: '13px', margin: '0px' }}
                       >
                         From: {notification.username}
                       </p>
@@ -84,7 +83,7 @@ const NotificationsDropdown = () => {
         )}
       </ul>
     </div>
-  );
-};
+  )
+}
 
-export default NotificationsDropdown;
+export default NotificationsDropdown

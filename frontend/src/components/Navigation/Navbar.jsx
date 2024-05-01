@@ -1,50 +1,49 @@
-import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import useSession from "../../hooks/useSession";
-import { LogOut } from "../../services/auth";
-import { getBooks } from "../../services/google.apis.books";
-import Loading from "../Global/Loading";
+import React, { useState } from 'react'
+import { Link, useLocation, useNavigate, useParams } from 'react-router-dom'
+import useSession from '../../hooks/useSession'
+import { LogOut } from '../../services/auth'
+import { getBooks } from '../../services/google.apis.books'
+import Loading from '../Global/Loading'
 //import MessagesDropdown from "./MessagesDropdown";
-import NotificationsDropdown from "./NotificationsDropdown";
-import { DebounceInput } from "react-debounce-input";
-import { useCallback } from "react";
-import { useEffect } from "react";
+import NotificationsDropdown from './NotificationsDropdown'
+import { DebounceInput } from 'react-debounce-input'
+import { useCallback } from 'react'
+import { useEffect } from 'react'
 
 const Navbar = ({ setIsActive, isActive }) => {
-  const { user, setUser, socket } = useSession() || {};
-
-  const navigate = useNavigate();
-  const [books, setBooks] = useState([]);
-  const [searchTitle, setSearchTitle] = useState("");
-  const [IsLoading, setIsLoading] = useState(false);
+  const { user, setUser } = useSession() || {}
+  const navigate = useNavigate()
+  const [books, setBooks] = useState([])
+  const [searchTitle, setSearchTitle] = useState('')
+  const [IsLoading, setIsLoading] = useState(false)
 
   const getFoundedBooks = useCallback(async () => {
-    if (searchTitle === "") {
-      setBooks([]);
-      return;
+    if (searchTitle === '') {
+      setBooks([])
+      return
     }
-    setIsLoading(true);
-    setBooks([]);
+    setIsLoading(true)
+    setBooks([])
 
-    const fetchedBooks = await getBooks(searchTitle.toLowerCase());
-    setBooks(fetchedBooks);
-    setIsLoading(false);
-  }, [searchTitle]);
+    const fetchedBooks = await getBooks(searchTitle.toLowerCase())
+    setBooks(fetchedBooks)
+    setIsLoading(false)
+  }, [searchTitle])
 
   const handleResultsClose = () => {
-    setBooks([]);
-    setSearchTitle("");
-  };
+    setBooks([])
+    setSearchTitle('')
+  }
 
   const handleLogout = () => {
-    LogOut();
-    setUser(null);
-    navigate("/login");
-  };
+    LogOut()
+    setUser(null)
+    navigate('/login')
+  }
 
   useEffect(() => {
-    getFoundedBooks();
-  }, [getFoundedBooks]);
+    getFoundedBooks()
+  }, [getFoundedBooks])
 
   return (
     <nav className={`navbar navbar-expand-lg navbar-dark bg-coffee`}>
@@ -54,7 +53,7 @@ const Navbar = ({ setIsActive, isActive }) => {
             data-bs-toggle="tooltip"
             data-bs-placement="top"
             title="Tooltip on top"
-            to={user === null ? "/" : "/me/catalog"}
+            to={user === null ? '/' : '/me/catalog'}
             className="navbar-brand fw-bolder fs-4"
           >
             {user === null ? (
@@ -87,24 +86,27 @@ const Navbar = ({ setIsActive, isActive }) => {
                   {IsLoading ? (
                     <div
                       className="position-absolute"
-                      style={{ zIndex: 10, right: "10px", top: "10px" }}
+                      style={{ zIndex: 10, right: '10px', top: '10px' }}
                     >
                       <Loading small text="purple" />
                     </div>
                   ) : null}
 
                   <ul
-                    style={{ top: "39px", zIndex: 20 }}
+                    style={{ top: '39px', zIndex: 20 }}
                     className="list-group position-absolute w-100"
                   >
                     {books !== undefined && books.length > 0 ? (
                       <div className="list-group-item text-decoration-none text-center d-flex justify-content-between align-items-center gap-3">
-                        <Link
+                        <button
                           className="btn btn-sm btn-primary w-100"
-                          to={`books/results/${searchTitle}`}
+                          onClick={() => {
+                            navigate(`books/results/${searchTitle}`)
+                            handleResultsClose()
+                          }}
                         >
                           All results
-                        </Link>
+                        </button>
                         <button
                           onClick={handleResultsClose}
                           className="btn btn-sm btn-purple w-50"
@@ -118,12 +120,12 @@ const Navbar = ({ setIsActive, isActive }) => {
                       book !== undefined ? (
                         i > 4 ? null : (
                           <Link
-                            to={`/books/details/${book.title}`}
+                            to={`/books/details/${book.googleBookId}`}
                             onClick={() => setBooks([])}
                             state={book}
                             className="list-group-item text-decoration-none"
-                            style={{ cursor: "pointer" }}
-                            key={book.title + book.publishedDate}
+                            style={{ cursor: 'pointer' }}
+                            key={book.googleBookId}
                           >
                             <div className="row">
                               <div className="col-4">
@@ -170,7 +172,7 @@ const Navbar = ({ setIsActive, isActive }) => {
                 >
                   <span className="d-none d-sm-inline-block d-md-inline-block d-lg-inline-block d-xl-inline-block d-xxl-inline-block">
                     {user.username}
-                  </span>{" "}
+                  </span>{' '}
                   <i className="fas fa-user"></i>
                 </button>
                 <ul
@@ -208,12 +210,12 @@ const Navbar = ({ setIsActive, isActive }) => {
               </button>
             </div>
           ) : (
-            <ul className="d-flex  mb-2  " style={{ listStyle: "none" }}>
-              <Link to={"/login"} className="nav-link fw-bolder text-light">
+            <ul className="d-flex  mb-2  " style={{ listStyle: 'none' }}>
+              <Link to={'/login'} className="nav-link fw-bolder text-light">
                 Login
               </Link>
 
-              <Link to={"/signup"} className="nav-link fw-bolder text-light">
+              <Link to={'/signup'} className="nav-link fw-bolder text-light">
                 Signup
               </Link>
             </ul>
@@ -221,7 +223,7 @@ const Navbar = ({ setIsActive, isActive }) => {
         </div>
       </div>
     </nav>
-  );
-};
+  )
+}
 
-export default Navbar;
+export default Navbar

@@ -1,7 +1,8 @@
-import React, { useState } from "react";
+import React, { useState } from 'react'
 
-const Showcase = ({ book }) => {
-  const [onReadMore, setOnReadMore] = useState(false);
+const Showcase = ({ book = null }) => {
+  const [onReadMore, setOnReadMore] = useState(false)
+
   return (
     <div className="row ">
       <div className="col-12 col-lg-3 col-xl-2 col-xxl-2 mb-2">
@@ -20,9 +21,7 @@ const Showcase = ({ book }) => {
             </>
           ) : (
             <div className="card">
-              <div className="card-body">
-                <h5>Looks like we can't load this book image</h5>
-              </div>
+              <div className="card-body"></div>
             </div>
           )}
         </div>
@@ -37,7 +36,7 @@ const Showcase = ({ book }) => {
           </h4>
 
           <p className={`mt-4 text-start ${onReadMore ? `d-block` : `d-none`}`}>
-            {book?.description}{" "}
+            {book?.description}{' '}
             <button
               onClick={() => setOnReadMore(!onReadMore)}
               className="btn btn-link text-purple"
@@ -48,7 +47,7 @@ const Showcase = ({ book }) => {
 
           <p className={`mt-4 text-start ${onReadMore ? `d-none` : `d-block`}`}>
             {book?.description && book?.description.length > 10
-              ? book?.description.substring(0, 350) + "... "
+              ? book?.description.substring(0, 350) + '... '
               : book?.description}
             {book?.description && book?.description.length > 10 ? (
               <button
@@ -80,7 +79,7 @@ const Showcase = ({ book }) => {
         </div>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default Showcase;
+export default Showcase

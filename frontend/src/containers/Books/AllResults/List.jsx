@@ -1,18 +1,30 @@
-import React, { useState } from "react";
-import useServiceFetch from "../../../hooks/useServiceFetch";
-import { Link } from "react-router-dom";
+import React, { useEffect, useState } from 'react'
+import { Link } from 'react-router-dom'
 
-import { getBooks } from "../../../services/google.apis.books";
+import { getBooks } from '../../../services/google.apis.books'
+
+const booksCache = new Map()
 
 const List = ({ title }) => {
-  const [books, setBooks] = useState([]);
+  const [books, setBooks] = useState([])
 
-  useServiceFetch(() => getBooks(title), setBooks);
+  useEffect(() => {
+    const loadBooks = async () => {
+      if (booksCache.has('books')) {
+        setBooks(booksCache.get('books'))
+      }
+
+      const fetchedBooks = await getBooks(title, 40)
+      setBooks(fetchedBooks ?? [])
+      booksCache.set('books', fetchedBooks)
+    }
+    loadBooks()
+  }, [title])
 
   return (
     <div>
       {books.map((b) => (
-        <div key={b.title + b.publisher} className="card mb-4">
+        <div key={b.googleBookId} className="card mb-4">
           <div className="card-body">
             <div className="row">
               <div className="col-3 col-lg-2 col-xl-1 col-xxl-1">
@@ -33,8 +45,8 @@ const List = ({ title }) => {
               <div className="col-9 col-lg-10 col-xl-6 col-xxl-11">
                 <div className="d-flex flex-column  align-items-end">
                   <Link
-                    to={`/books/details/${b.title}`}
-                    className={"btn btn-primary"}
+                    to={`/books/details/${b.googleBookId}`}
+                    className={'btn btn-primary'}
                     state={b}
                   >
                     Details <i className="fas fa-arrow-right"></i>
@@ -46,7 +58,7 @@ const List = ({ title }) => {
         </div>
       ))}
     </div>
-  );
-};
+  )
+}
 
-export default List;
+export default List

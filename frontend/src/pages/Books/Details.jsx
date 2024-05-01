@@ -1,61 +1,43 @@
-import React, { useCallback, useEffect, useState } from "react";
-import { useLocation, useParams } from "react-router-dom";
-import { getBooks } from "../../services/google.apis.books";
-import { checkBookInCatalog } from "../../services/books";
-import Showcase from "../../containers/Books/Details/Showcase";
-import AddToCatalog from "../../containers/Books/Details/AddToCatalog";
-import BookInCatalog from "../../containers/Books/Details/BookInCatalog";
-import Advances from "../../containers/Books/Details/Advances";
-import Loading from "../../components/Global/Loading";
-import UserReview from "../../containers/Books/Details/UserReview";
-import Reviews from "../../containers/Books/Details/Reviews";
-
-const catalogData = {
-  inCatalog: false,
-  book: {},
-};
+import React, { useCallback, useEffect, useState } from 'react'
+import { useLocation, useParams } from 'react-router-dom'
+import { getBookById, getBooks } from '../../services/google.apis.books'
+import { checkBookInCatalog } from '../../services/books'
+import Showcase from '../../containers/Books/Details/Showcase'
+import AddToCatalog from '../../containers/Books/Details/AddToCatalog'
+import BookInCatalog from '../../containers/Books/Details/BookInCatalog'
+import Advances from '../../containers/Books/Details/Advances'
+import Loading from '../../components/Global/Loading'
+import UserReview from '../../containers/Books/Details/UserReview'
+import Reviews from '../../containers/Books/Details/Reviews'
 
 const Details = () => {
-  const [book, setBook] = useState({});
-  const [onUserCatalog, setOnUserCatalog] = useState(catalogData);
-  const [isLoading, setIsLoading] = useState(false);
-  const { state } = useLocation();
-  const { title } = useParams();
+  const [catalogUserbook, setUserCatalogBook] = useState(null)
+  const [googleBook, setGoogleBook] = useState(null)
+  const [isLoading, setIsLoading] = useState(false)
 
-  const checkOnCatalog = useCallback(async (bookToSearch) => {
-    const results = await checkBookInCatalog(bookToSearch);
-    if (results.status) {
-      setOnUserCatalog((prev) => ({
-        ...prev,
-        inCatalog: true,
-        book: results.book,
-      }));
-    } else {
-      setOnUserCatalog((prev) => ({
-        ...prev,
-        inCatalog: false,
-        book: {},
-      }));
-    }
-  }, []);
+  const { id } = useParams()
 
-  const getBookFromFetch = useCallback(async () => {
-    setIsLoading(true);
-    const fetchedBooks = await getBooks(title);
-    const exactBook = fetchedBooks.find((book) => book.title === title);
-    await checkOnCatalog(exactBook);
-    setBook(exactBook);
-    setIsLoading(false);
-  }, [title, checkOnCatalog]);
+  const getBookInCatalog = useCallback(async () => {
+    setIsLoading(true)
+    const foundUserBook = await checkBookInCatalog(id)
+    setUserCatalogBook(foundUserBook)
+    setIsLoading(false)
+  }, [id])
 
   useEffect(() => {
-    if (state !== null) {
-      setBook(state);
-      checkOnCatalog(state);
-    } else {
-      getBookFromFetch();
+    const getGoogleBookData = async () => {
+      if (!id) return
+      setIsLoading(true)
+
+      const fetchedBook = await getBookById(id)
+      setGoogleBook(fetchedBook)
+
+      setIsLoading(false)
     }
-  }, [state, getBookFromFetch, checkOnCatalog]);
+
+    getBookInCatalog()
+    getGoogleBookData()
+  }, [id, getBookInCatalog])
 
   return (
     <div className="container py-3">
@@ -64,34 +46,36 @@ const Details = () => {
       ) : (
         <div>
           <div className="d-flex justify-content-center justify-content-lg-end  mb-2">
-            {onUserCatalog.inCatalog ? (
+            {catalogUserbook ? (
               <BookInCatalog
-                book={onUserCatalog.book}
-                refresh={getBookFromFetch}
+                book={catalogUserbook}
+                refresh={getBookInCatalog}
               />
             ) : (
-              <AddToCatalog book={book} refresh={getBookFromFetch} />
+              <AddToCatalog book={googleBook} refresh={getBookInCatalog} />
             )}
           </div>
-          <Showcase book={book} />
 
-          {onUserCatalog.book.status === "Reading" ? (
+          <Showcase book={googleBook} />
+
+          {catalogUserbook?.status === 'Reading' && (
             <Advances
-              book={book}
-              onCatalogBook={onUserCatalog.book}
-              refresh={getBookFromFetch}
+              book={googleBook}
+              onCatalogBook={catalogUserbook}
+              refresh={getBookInCatalog}
             />
-          ) : null}
-          {onUserCatalog.book.status === "Read" ? (
+          )}
+
+          {catalogUserbook?.status === 'Read' && (
             <>
-              <UserReview book={onUserCatalog.book} />
+              <UserReview book={catalogUserbook} />
               <Reviews />
             </>
-          ) : null}
+          )}
         </div>
       )}
     </div>
-  );
-};
+  )
+}
 
-export default Details;
+export default Details
