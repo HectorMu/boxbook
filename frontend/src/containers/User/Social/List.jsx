@@ -1,12 +1,13 @@
-import React, { useState } from "react";
-import { getUsersOnSameLocation } from "../../../services/social";
-import useServiceFetch from "../../../hooks/useServiceFetch";
-import Loading from "../../../components/Global/Loading";
-import { Link } from "react-router-dom";
+import React, { useState } from 'react'
+import { getUsersOnSameLocation } from '../../../services/social'
+import useServiceFetch from '../../../hooks/useServiceFetch'
+import Loading from '../../../components/Global/Loading'
+import { Link } from 'react-router-dom'
+import { FaUser } from 'react-icons/fa'
 
 const List = () => {
-  const [localUsers, setLocalUsers] = useState([]);
-  const { isLoading } = useServiceFetch(getUsersOnSameLocation, setLocalUsers);
+  const [localUsers, setLocalUsers] = useState([])
+  const { isLoading } = useServiceFetch(getUsersOnSameLocation, setLocalUsers)
 
   return (
     <div>
@@ -29,6 +30,13 @@ const List = () => {
                 <div className="row g-0">
                   <div className="col-md-4 d-flex flex-column justify-content-center align-items-center">
                     <i className="fas fa-user fa-5x p-2"></i>
+                    <FaUser
+                      style={{
+                        padding: '2px',
+                        width: '80px',
+                        height: '80px'
+                      }}
+                    />
                     <p> {user.username}</p>
                   </div>
                   <div className="col-md-8">
@@ -47,7 +55,7 @@ const List = () => {
         </div>
       )}
     </div>
-  );
-};
+  )
+}
 
-export default List;
+export default List

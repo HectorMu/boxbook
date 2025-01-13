@@ -1,119 +1,117 @@
-const connection = require("../database");
-const jwt = require("jsonwebtoken");
-const helpers = require("../helpers/helpers");
-const nodeMailer = require("../lib/nodemailer");
-const { validateEmail } = require("../helpers/helpers");
-const controller = {};
+const connection = require('../database')
+const jwt = require('jsonwebtoken')
+const helpers = require('../helpers/helpers')
+const nodeMailer = require('../lib/nodemailer')
+const { validateEmail } = require('../helpers/helpers')
+const controller = {}
 
 controller.Login = async (req, res) => {
-  const { email, password } = req.body;
+  const { email, password } = req.body
   try {
     const results = await connection.query(
       `select * from users where email = ? `,
       [email]
-    );
+    )
     if (!results.length > 0)
       return res.status(400).json({
         status: false,
-        statusText: "Wrong credentials, check it out.",
-      });
+        statusText: 'Wrong credentials, check it out.'
+      })
 
-    const user = results[0];
+    const user = results[0]
     const passwordComparationResult = await helpers.matchPassword(
       password,
       user.password
-    );
+    )
 
     if (!passwordComparationResult)
       return res.status(400).json({
         status: false,
-        statusText: "Wrong credentials, check it out.",
-      });
+        statusText: 'Wrong credentials, check it out.'
+      })
 
     const payload = {
       id: user.id,
       username: user.username,
       fullname: user.fullname,
-      email: user.email,
-    };
+      email: user.email
+    }
 
-    const AccessToken = jwt.sign(payload, process.env.ACCESS_TOKEN_SECRET);
+    const AccessToken = jwt.sign(payload, process.env.ACCESS_TOKEN_SECRET)
 
     const SessionData = {
       ...payload,
-      AccessToken,
-    };
+      AccessToken
+    }
 
     res.status(200).json({
       status: true,
-      statusText: "Welcome",
-      SessionData,
-    });
+      statusText: 'Welcome',
+      SessionData
+    })
   } catch (error) {
-    console.log(error);
+    console.log(error)
     res
       .status(200)
-      .json({ status: false, statusText: "Something wen't wrong." });
+      .json({ status: false, statusText: "Something wen't wrong." })
   }
-};
+}
 
 controller.Signup = async (req, res) => {
   try {
     const results = await connection.query(
       `select * from users where email = ? `,
       [req.body.email]
-    );
+    )
     if (results.length > 0)
       return res.json({
         status: false,
-        statusText:
-          "An account is using this email already, try another email.",
-      });
+        statusText: 'An account is using this email already, try another email.'
+      })
 
     if (!validateEmail(req.body.email)) {
       return res
         .status(200)
-        .json({ status: false, statusText: "Provide a valid email" });
+        .json({ status: false, statusText: 'Provide a valid email' })
     }
 
     const newUser = {
       ...req.body,
       yearlyGoal: 0,
-      booksReaded: 0,
-    };
+      booksReaded: 0
+    }
 
-    newUser.password = await helpers.encryptPassword(newUser.password);
-    await connection.query("insert into users set ?", [newUser]);
+    newUser.password = await helpers.encryptPassword(newUser.password)
+    await connection.query('insert into users set ?', [newUser])
     res.status(200).json({
       status: true,
-      statusText: "Registered, now Log in to continue!",
-    });
+      statusText: 'Registered, now Log in to continue!'
+    })
   } catch (error) {
-    console.log(error);
+    console.log(error)
     res
       .status(200)
-      .json({ status: false, statusText: "Something wen't wrong." });
+      .json({ status: false, statusText: "Something wen't wrong." })
   }
-};
+}
 
 controller.sendRecoverEmail = async (req, res) => {
-  const { email } = req.body;
+  const { email } = req.body
   const results = await connection.query(
-    "select * from users where email = ?",
+    'select * from users where email = ?',
     [email]
-  );
+  )
   if (results.length > 0) {
-    nodeMailer.Send(req, res);
+    nodeMailer.Send(req, res)
   } else {
     res.status(200).json({
       status: false,
-      statusText:
-        "Provided email invalid, no existing account with this email.",
-    });
+      statusText: 'Provided email invalid, no existing account with this email.'
+    })
   }
-};
+}
 controller.VerifyRecoverEmailToken = (req, res) => {
-  const { ResetToken } = req.params;
+  const { ResetToken } = req.params
   try {
     const decodedResetToken = jwt.verify(
       ResetToken,
@@ -121,59 +119,59 @@ controller.VerifyRecoverEmailToken = (req, res) => {
       (err, decoded) => {
         if (err) {
           err = {
-            name: "TokenExpiredError",
-            message: "jwt expired",
-            status: false,
-          };
-          return;
+            name: 'TokenExpiredError',
+            message: 'jwt expired',
+            status: false
+          }
+          return
         } else {
           return {
             status: true,
-            decoded,
-          };
+            decoded
+          }
         }
       }
-    );
+    )
 
     if (!decodedResetToken.status)
       return res
         .status(200)
-        .json({ status: false, statusText: "Invalid token, token expired" });
+        .json({ status: false, statusText: 'Invalid token, token expired' })
 
-    res.status(200).json({ status: true, statusText: "Valid token" });
+    res.status(200).json({ status: true, statusText: 'Valid token' })
   } catch (error) {
     res.status(200).json({
       status: false,
-      statusText: "Invalid token, token malformed or expired",
-    });
+      statusText: 'Invalid token, token malformed or expired'
+    })
   }
-};
+}
 
 controller.ResetPassword = async (req, res) => {
-  const { ResetToken } = req.params;
-  const { password } = req.body;
+  const { ResetToken } = req.params
+  const { password } = req.body
 
   try {
     const decodedResetToken = jwt.verify(
       ResetToken,
       process.env.EMAIL_TOKEN_SECRET
-    );
+    )
 
-    const { id } = decodedResetToken;
+    const { id } = decodedResetToken
 
-    const hashedPassword = await helpers.encryptPassword(password);
+    const hashedPassword = await helpers.encryptPassword(password)
 
-    await connection.query("update users set password = ? where id = ?", [
+    await connection.query('update users set password = ? where id = ?', [
       hashedPassword,
-      id,
-    ]);
+      id
+    ])
 
-    res.status(200).json({ status: true, statusText: "Password changed" });
+    res.status(200).json({ status: true, statusText: 'Password changed' })
   } catch (error) {
     res.status(200).json({
       status: false,
-      statusText: "Something wen't wrong, try again later.",
-    });
+      statusText: "Something wen't wrong, try again later."
+    })
   }
-};
-module.exports = controller;
+}
+module.exports = controller

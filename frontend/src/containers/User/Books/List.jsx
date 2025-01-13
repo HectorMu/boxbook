@@ -1,38 +1,39 @@
-import React, { useCallback, useEffect, useState } from "react";
-import { getCatalog } from "../../../services/books";
-import useServiceFetch from "../../../hooks/useServiceFetch";
-import Loading from "../../../components/Global/Loading";
-import BookCard from "../../../components/User/Books/BookCard";
+import React, { useCallback, useEffect, useState } from 'react'
+import { getCatalog } from '../../../services/books'
+import useServiceFetch from '../../../hooks/useServiceFetch'
+import Loading from '../../../components/Global/Loading'
+import BookCard from '../../../components/User/Books/BookCard'
+import { FaSearch } from 'react-icons/fa'
 
 //Arrays for each user book section
 const booksArrays = {
   pending: [],
   reading: [],
-  read: [],
-};
+  read: []
+}
 
 const List = () => {
-  const [books, setBooks] = useState([]);
-  const { isLoading, refreshData } = useServiceFetch(getCatalog, setBooks);
-  const [booksCat, setBooksCat] = useState(booksArrays);
-  const [onSearch, setOnSearch] = useState("");
+  const [books, setBooks] = useState([])
+  const { isLoading, refreshData } = useServiceFetch(getCatalog, setBooks)
+  const [booksCat, setBooksCat] = useState(booksArrays)
+  const [onSearch, setOnSearch] = useState('')
 
   const filterBooksByStatus = useCallback(() => {
-    const pendingBooks = books.filter((b) => b.status === "Pending");
-    const readingBooks = books.filter((b) => b.status === "Reading");
-    const readBooks = books.filter((b) => b.status === "Read");
+    const pendingBooks = books.filter((b) => b.status === 'Pending')
+    const readingBooks = books.filter((b) => b.status === 'Reading')
+    const readBooks = books.filter((b) => b.status === 'Read')
 
     setBooksCat((prev) => ({
       ...prev,
       pending: pendingBooks,
       reading: readingBooks,
-      read: readBooks,
-    }));
-  }, [books]);
+      read: readBooks
+    }))
+  }, [books])
 
   useEffect(() => {
-    filterBooksByStatus();
-  }, [filterBooksByStatus]);
+    filterBooksByStatus()
+  }, [filterBooksByStatus])
 
   return (
     <div className="mt-5">
@@ -52,7 +53,7 @@ const List = () => {
             <h5>All books</h5>
             <div className="input-group w-auto">
               <button className="btn btn-primary">
-                <i className=" fas fa-search"></i>
+                <FaSearch />
               </button>
               <input
                 type="text"
@@ -153,7 +154,7 @@ const List = () => {
         </h3>
       )}
     </div>
-  );
-};
+  )
+}
 
-export default List;
+export default List

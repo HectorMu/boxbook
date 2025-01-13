@@ -1,49 +1,50 @@
-import React, { useState, useEffect, useCallback } from "react";
-import { useParams } from "react-router-dom";
-import { contactUser } from "../../../services/social";
-import { getMessages } from "../../../services/user";
-import Canvas from "../../../components/Global/Canvas";
-import toast from "react-hot-toast";
+import React, { useState, useEffect, useCallback } from 'react'
+import { useParams } from 'react-router-dom'
+import { contactUser } from '../../../services/social'
+import { getMessages } from '../../../services/user'
+import Canvas from '../../../components/Global/Canvas'
+import toast from 'react-hot-toast'
+import { FaPaperPlane } from 'react-icons/fa'
 
 const contactData = {
   contactId: 0,
-  message: "",
-};
+  message: ''
+}
 
 const Contact = ({ profile, refresh }) => {
-  const [contact, setContact] = useState(contactData);
-  const [messages, setMessages] = useState([]);
+  const [contact, setContact] = useState(contactData)
+  const [messages, setMessages] = useState([])
 
-  const { id } = useParams();
+  const { id } = useParams()
 
   const getAndSetMessage = useCallback(async () => {
-    const messages = await getMessages();
+    const messages = await getMessages()
 
     const filteredMessages = messages.filter(
       (message) => message.user_first_id === parseInt(id)
-    );
+    )
 
-    setMessages(filteredMessages);
-  }, [id]);
+    setMessages(filteredMessages)
+  }, [id])
 
-  const handleChange = (key, value) => setContact({ ...contact, [key]: value });
+  const handleChange = (key, value) => setContact({ ...contact, [key]: value })
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    const tLoading = toast.loading("Sending...");
-    const results = await contactUser(contact);
+    e.preventDefault()
+    const tLoading = toast.loading('Sending...')
+    const results = await contactUser(contact)
     if (!results.status) {
-      return toast.error(results.statusText, { id: tLoading });
+      return toast.error(results.statusText, { id: tLoading })
     }
-    toast.success(results.statusText, { id: tLoading });
-    refresh();
-  };
+    toast.success(results.statusText, { id: tLoading })
+    refresh()
+  }
 
   useEffect(() => {
-    handleChange("contactId", parseInt(id));
-    getAndSetMessage();
+    handleChange('contactId', parseInt(id))
+    getAndSetMessage()
     //eslint-disable-next-line  react-hooks/exhaustive-deps
-  }, [getAndSetMessage]);
+  }, [getAndSetMessage])
 
   return (
     <Canvas
@@ -51,7 +52,7 @@ const Contact = ({ profile, refresh }) => {
       title={`Contacting to ${profile.username}`}
       buttonClass="btn btn-purple btn-sm"
       buttonText="Contact"
-      icon="fas fa-paper-plane"
+      icon={<FaPaperPlane />}
     >
       {messages.length > 0 ? (
         <>
@@ -68,7 +69,7 @@ const Contact = ({ profile, refresh }) => {
           placeholder={`${
             messages && messages.length > 0 ? `Answer` : `Send a message`
           } to ${profile.fullname}`}
-          onChange={(e) => handleChange("message", e.target.value)}
+          onChange={(e) => handleChange('message', e.target.value)}
         ></textarea>
 
         <div className="d-flex justify-content-center mt-4 flex-column align-items-center">
@@ -83,7 +84,7 @@ const Contact = ({ profile, refresh }) => {
         </div>
       </form>
     </Canvas>
-  );
-};
+  )
+}
 
-export default Contact;
+export default Contact

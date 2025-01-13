@@ -1,12 +1,12 @@
-import React from "react";
+import React from 'react'
 
 const Canvas = ({
-  title = "Canvas test",
-  id = "canvasDefault",
+  title = 'Canvas test',
+  id = 'canvasDefault',
   children,
-  buttonText = "toggle canvas",
-  buttonClass = "btn btn-primary",
-  icon = "fas fa-question",
+  buttonText = 'toggle canvas',
+  buttonClass = 'btn btn-primary',
+  icon = null
 }) => {
   return (
     <div>
@@ -17,7 +17,7 @@ const Canvas = ({
         data-bs-target={`#${id}`}
         aria-controls={`id`}
       >
-        {buttonText} {icon ? <i className={icon}></i> : null}
+        {buttonText} {icon}
       </button>
       <div
         className="offcanvas offcanvas-start"
@@ -40,7 +40,7 @@ const Canvas = ({
         <div className="offcanvas-body">{children}</div>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default Canvas;
+export default Canvas

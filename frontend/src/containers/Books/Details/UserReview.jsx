@@ -1,8 +1,8 @@
-import React from "react";
-import useSession from "../../../hooks/useSession";
+import useSession from '../../../hooks/useSession'
+import { FaUserCircle } from 'react-icons/fa'
 
 const UserReview = ({ book }) => {
-  const { user } = useSession();
+  const { user } = useSession()
   return (
     <>
       <div className="mt-3  border-purple mb-5">
@@ -11,7 +11,7 @@ const UserReview = ({ book }) => {
         <div className="card py-2 px-5 mb-3">
           <div className="row g-0">
             <div className="col-12 col-md-4 col-lg-2 d-flex justify-content-center  align-items-center">
-              <i className="fas fa-user-circle fa-5x "></i>
+              <FaUserCircle style={{ fontSize: '115px' }} />
             </div>
             <div className="col-11 col-md-8 col-lg-10">
               <div className="card-body">
@@ -29,7 +29,7 @@ const UserReview = ({ book }) => {
         </div>
       </div>
     </>
-  );
-};
+  )
+}
 
-export default UserReview;
+export default UserReview

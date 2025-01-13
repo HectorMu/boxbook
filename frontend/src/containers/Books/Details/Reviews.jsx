@@ -1,19 +1,20 @@
-import React, { useState, useEffect, useCallback } from "react";
-import { getBookReviews } from "../../../services/books";
-import { useParams } from "react-router-dom";
+import { useState, useEffect, useCallback } from 'react'
+import { getBookReviews } from '../../../services/books'
+import { useParams } from 'react-router-dom'
+import { FaUser } from 'react-icons/fa6'
 
 const Reviews = () => {
-  const { title } = useParams();
-  const [reviews, setReviews] = useState([]);
+  const { title } = useParams()
+  const [reviews, setReviews] = useState([])
 
   const getReviewsHandler = useCallback(async () => {
-    const fetchedReviews = await getBookReviews(title);
-    setReviews(fetchedReviews);
-  }, [title]);
+    const fetchedReviews = await getBookReviews(title)
+    setReviews(fetchedReviews)
+  }, [title])
 
   useEffect(() => {
-    getReviewsHandler();
-  }, [getReviewsHandler]);
+    getReviewsHandler()
+  }, [getReviewsHandler])
   return (
     <div>
       <h5>All reviews</h5>
@@ -23,12 +24,12 @@ const Reviews = () => {
             <div key={review.id} className="card py-2 px-5 mb-3">
               <div className="row g-0">
                 <div className="col-12 col-md-4 col-lg-2 d-flex justify-content-center  align-items-center">
-                  <i className="fas fa-user-circle fa-6x "></i>
+                  <FaUser style={{ fontSize: '115px' }} />
                 </div>
                 <div className="col-11 col-md-8 col-lg-10">
                   <div className="card-body">
                     <h5 className="card-title d-flex justify-content-between">
-                      {review.username}{" "}
+                      {review.username}{' '}
                       <small className="text-purple">{review.score}/5</small>
                     </h5>
                     <p className="card-text">{review.review}</p>
@@ -45,7 +46,7 @@ const Reviews = () => {
         <h3>This book don´t have more reviews yet.</h3>
       )}
     </div>
-  );
-};
+  )
+}
 
-export default Reviews;
+export default Reviews

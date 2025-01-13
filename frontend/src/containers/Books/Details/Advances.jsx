@@ -9,6 +9,7 @@ import FloatingLabelInput from '../../../components/Global/FloatingLabelInput'
 import AdvanceModel from '../../../Models/Books/AdvanceModel'
 import BookReadModel from '../../../Models/Books/BookReadModel'
 import toast from 'react-hot-toast'
+import { FaPlus } from 'react-icons/fa'
 
 const rateStars = [1, 2, 3, 4, 5]
 
@@ -107,7 +108,7 @@ const Advances = ({ book, onCatalogBook, refresh }) => {
           title="Adding new advance"
           id="advancesCanvas"
           buttonText="New advance"
-          icon="fas fa-plus"
+          icon={<FaPlus />}
         >
           <h6 className="mb-3">Current page: {currentAdvance?.pagesReaded}</h6>
           {newAdvance?.pagesReaded === book?.pageCount ? (

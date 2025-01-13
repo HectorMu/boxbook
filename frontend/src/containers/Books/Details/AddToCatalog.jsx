@@ -3,6 +3,7 @@ import toast from 'react-hot-toast'
 import Canvas from '../../../components/Global/Canvas'
 import bookModel from '../../../Models/Books/BookModel'
 import { addBookToCatalog } from '../../../services/books'
+import { FaPlus } from 'react-icons/fa'
 
 const rateStars = [1, 2, 3, 4, 5]
 
@@ -10,7 +11,6 @@ const AddToCatalog = ({ book = null, refresh }) => {
   const [bookToAdd, setBookToAdd] = useState(bookModel)
   const [onRating, setOnRating] = useState(0)
   const [rated, setRated] = useState(0)
-
 
   const handleChange = (key, value) =>
     setBookToAdd({ ...bookToAdd, [key]: value })
@@ -73,7 +73,7 @@ const AddToCatalog = ({ book = null, refresh }) => {
       title="Adding book to catalog"
       buttonText="Add to catalog"
       buttonClass="btn btn-sm btn-purple"
-      icon="fas fa-plus"
+      icon={<FaPlus />}
     >
       <form onSubmit={handleSubmit}>
         <select

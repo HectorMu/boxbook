@@ -11,6 +11,7 @@ import Swal from 'sweetalert2'
 import Canvas from '../../../components/Global/Canvas'
 import AdvanceModel from '../../../Models/Books/AdvanceModel.js'
 import FloatingLabelInput from '../../../components/Global/FloatingLabelInput'
+import { FaGlasses } from 'react-icons/fa'
 
 const rateStars = [1, 2, 3, 4, 5]
 
@@ -106,7 +107,7 @@ const BookInCatalog = ({ book, refresh }) => {
           id="starToReadCanvas"
           buttonClass="btn btn-purple btn-sm me-2"
           buttonText="Start to read"
-          icon="fas fa-glasses"
+          icon={<FaGlasses />}
           title="Add first book advance"
         >
           <form onSubmit={handleSubmit}>

@@ -5,6 +5,7 @@ import { removeBookFromCatalog } from '../../../services/books'
 import Swal from 'sweetalert2'
 import { alertConfig } from '../../../helpers/helpers'
 import toast from 'react-hot-toast'
+import { FaTrash } from 'react-icons/fa'
 
 const BookCard = ({ book, refresh }) => {
   const navigate = useNavigate()
@@ -38,7 +39,7 @@ const BookCard = ({ book, refresh }) => {
             onClick={removeHandler}
             className="btn btn-danger btn-sm w-100"
           >
-            <i className="fas fa-trash"></i>
+            <FaTrash />
           </button>
         </div>
         <div

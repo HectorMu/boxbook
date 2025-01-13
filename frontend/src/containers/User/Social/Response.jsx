@@ -1,5 +1,6 @@
-import React from "react";
-import Canvas from "../../../components/Global/Canvas";
+import React from 'react'
+import Canvas from '../../../components/Global/Canvas'
+import { FaClock } from 'react-icons/fa'
 
 const Response = () => {
   return (
@@ -8,9 +9,9 @@ const Response = () => {
       id="canvasResponse"
       buttonClass="btn btn-sm btn-purple"
       buttonText="Response pending"
-      icon="fas fa-clock"
+      icon={<FaClock />}
     ></Canvas>
-  );
-};
+  )
+}
 
-export default Response;
+export default Response
