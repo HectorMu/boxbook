@@ -16,6 +16,7 @@ import CatalogCommentaries from '../../containers/User/Social/CatalogCommentarie
 import UserOwnCommentary from '../../containers/User/Social/UserOwnCommentary'
 import toast from 'react-hot-toast'
 import useSession from '../../hooks/useSession'
+import { FaTrash, FaUser } from 'react-icons/fa'
 
 const UserProfile = () => {
   const { socket, user } = useSession() || {}
@@ -149,7 +150,7 @@ const UserProfile = () => {
           <div className="mb-3  d-flex align-items-center py-5 shadow-lg">
             <div className="row g-0 ">
               <div className="col-md-4 d-flex justify-content-center align-items-center">
-                <i className="fas fa-user fa-7x"></i>
+                <FaUser style={{ width: '110px', height: '110px' }} />
               </div>
               <div className="col-md-8 ">
                 <div className="card-body">
@@ -174,8 +175,7 @@ const UserProfile = () => {
                       >
                         {isPendingHovered ? (
                           <>
-                            Delete frienship solitude{' '}
-                            <i className="fas fa-trash-alt"></i>
+                            Delete frienship solitude <FaTrash />
                           </>
                         ) : (
                           'Response pending'
@@ -188,7 +188,7 @@ const UserProfile = () => {
                         onClick={addAsFriendHandler}
                         className="btn btn-purple btn-sm"
                       >
-                        <i className="fas fa-user"></i> Add to friend list
+                        Add to friend list
                       </button>
                     )}
 
@@ -197,7 +197,7 @@ const UserProfile = () => {
                         onClick={removeAsFriendHandler}
                         className="btn btn-purple btn-sm"
                       >
-                        <i className="fas fa-user"></i> Friends
+                        Friends
                       </button>
                     )}
                   </h5>

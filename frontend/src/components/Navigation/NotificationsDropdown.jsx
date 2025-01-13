@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { getSolitudes } from '../../services/user'
 import { Link } from 'react-router-dom'
 import useSession from '../../hooks/useSession'
+import { FaBell, FaUser } from 'react-icons/fa'
 
 const NotificationsDropdown = () => {
   const { socket } = useSession() || {}
@@ -36,7 +37,7 @@ const NotificationsDropdown = () => {
         data-bs-toggle="dropdown"
         aria-expanded="false"
       >
-        <i className="fas fa-bell"></i>
+        <FaBell />
       </button>
       <ul
         className="dropdown-menu dropdown-menu-end dropd position-absolute px-2 py-2"
@@ -50,7 +51,7 @@ const NotificationsDropdown = () => {
                 <div className="row">
                   <div className="col-2 border-2 border-end border-secondary ">
                     <div className="d-flex justify-content-center align-items-center h-100">
-                      <i className="fas fa-user"></i>
+                      <FaUser />
                     </div>
                   </div>
                   <div className="col-10">
