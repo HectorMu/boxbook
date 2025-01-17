@@ -5,41 +5,22 @@ export const getBooks = async (q, maxResults = 10) => {
     `https://www.googleapis.com/books/v1/volumes?q=${q}&maxResults=${maxResults}`
   )
 
-  const xd = await response.json()
-  const items = xd.items
+  const data = await response.json()
+  const books = data.items
 
-  console.log(xd)
-
-  const bookTotalInfo = items.map(({ id, volumeInfo }) => ({
-    id,
-    ...volumeInfo
+  const mappedBooks = books.map(({ id, volumeInfo }) => ({
+    googleBookId: id,
+    title: volumeInfo.title,
+    authors: volumeInfo.authors,
+    pageCount: volumeInfo.pageCount,
+    imageLinks: volumeInfo.imageLinks,
+    publisher: volumeInfo.publisher,
+    publishedDate: volumeInfo.publishedDate,
+    description: volumeInfo.description,
+    categories: volumeInfo.categories
   }))
 
-  const bookRequiredInfo = bookTotalInfo.map(
-    ({
-      id,
-      title,
-      authors,
-      pageCount,
-      imageLinks,
-      publisher,
-      publishedDate,
-      description,
-      categories
-    }) => ({
-      googleBookId: id,
-      title,
-      authors,
-      pageCount,
-      imageLinks,
-      publisher,
-      publishedDate,
-      description,
-      categories
-    })
-  )
-
-  return bookRequiredInfo
+  return mappedBooks
 }
 
 export const getBookById = async (id) => {

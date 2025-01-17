@@ -1,4 +1,3 @@
-import React from 'react'
 import TruncatedText from '../../Global/TruncatedText'
 import { useNavigate } from 'react-router-dom'
 import { removeBookFromCatalog } from '../../../services/books'
@@ -16,8 +15,9 @@ const BookCard = ({ book, refresh }) => {
       ...alertConfig
     }).then(async (result) => {
       if (result.isConfirmed) {
+        console.log(book)
         const tLoading = toast.loading('Removing..')
-        const results = await removeBookFromCatalog(book.title)
+        const results = await removeBookFromCatalog(book.googleBookId)
         if (!results.status) {
           toast.error("Something wen't wrong, try again later")
         }

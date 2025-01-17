@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from 'react'
+import { useState, useEffect } from 'react'
 import toast from 'react-hot-toast'
 import Canvas from '../../../components/Global/Canvas'
 import bookModel from '../../../Models/Books/BookModel'
 import { addBookToCatalog } from '../../../services/books'
-import { FaPlus } from 'react-icons/fa'
+import { FaPlus, FaStar } from 'react-icons/fa'
 
 const rateStars = [1, 2, 3, 4, 5]
 
@@ -119,7 +119,7 @@ const AddToCatalog = ({ book = null, refresh }) => {
                       : `${onRating >= i + 1 ? `text-purple-light` : ''} `
                   } `}
                 >
-                  <i className="fas fa-star responsive-font"></i>
+                  <FaStar className="responsive-font" />
                 </button>
               ))}
             </div>

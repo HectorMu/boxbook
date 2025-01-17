@@ -1,4 +1,3 @@
-import React from 'react'
 import EditForm from '../../containers/User/Profile/EditForm'
 
 const Profile = () => {

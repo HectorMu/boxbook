@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 //Importing custom components
 import FloatingLabelInput from '../../../components/Global/FloatingLabelInput'
 //Importing hooks
@@ -40,23 +40,17 @@ const EditForm = () => {
   }, [])
 
   const getCitiesFromCountry = useCallback(() => {
-    if (
-      userProfile.country === '' ||
-      userProfile.country === undefined ||
-      userProfile.country === null
-    ) {
+    if (!userProfile.country) {
       setCities([])
       return
     }
 
-    const selectedCountry = countries.filter(
+    const selectedCountry = countries.find(
       ({ country }) => country === userProfile.country
     )
 
-    if (selectedCountry.length > 0) {
-      if (selectedCountry[0].cities.length > 0) {
-        setCities(selectedCountry[0].cities)
-      }
+    if (selectedCountry) {
+      setCities(selectedCountry.cities)
     }
   }, [userProfile.country, countries])
 

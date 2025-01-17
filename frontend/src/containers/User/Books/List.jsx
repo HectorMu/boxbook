@@ -90,7 +90,7 @@ const List = () => {
           {/* /All books */}
 
           {/* Reading books */}
-          {booksCat.length > 0 ? (
+          {booksCat.reading.length > 0 ? (
             <>
               <div className="border-2 border-bottom border-secondary pb-3 d-flex justify-content-between">
                 <h5>Reading books</h5>

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import {
   getAdvancesHistory,
   saveNewAdvance,
@@ -9,7 +9,7 @@ import FloatingLabelInput from '../../../components/Global/FloatingLabelInput'
 import AdvanceModel from '../../../Models/Books/AdvanceModel'
 import BookReadModel from '../../../Models/Books/BookReadModel'
 import toast from 'react-hot-toast'
-import { FaPlus } from 'react-icons/fa'
+import { FaPlus, FaStar } from 'react-icons/fa'
 
 const rateStars = [1, 2, 3, 4, 5]
 
@@ -133,7 +133,7 @@ const Advances = ({ book, onCatalogBook, refresh }) => {
                         : `${onRating >= i + 1 ? `text-purple-light` : ''} `
                     } `}
                   >
-                    <i className="fas fa-star responsive-font"></i>
+                    <FaStar className="responsive-font" />
                   </button>
                 ))}
               </div>
