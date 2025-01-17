@@ -69,7 +69,14 @@ const Details = () => {
           {catalogUserbook?.status === 'Read' && (
             <>
               <UserReview book={catalogUserbook} />
-              <Reviews />
+              <Advances
+                book={googleBook}
+                onCatalogBook={catalogUserbook}
+                refresh={getBookInCatalog}
+              />
+              <div className="mt-5">
+                <Reviews />
+              </div>
             </>
           )}
         </div>

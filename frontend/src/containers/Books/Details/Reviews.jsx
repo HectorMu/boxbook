@@ -17,7 +17,7 @@ const Reviews = () => {
   }, [getReviewsHandler])
   return (
     <div>
-      <h5>All reviews</h5>
+      <h2>Reviews</h2>
       {reviews.length > 0 ? (
         <>
           {reviews.map((review) => (
@@ -43,7 +43,7 @@ const Reviews = () => {
           ))}
         </>
       ) : (
-        <h3>This book don´t have more reviews yet.</h3>
+        <p>This book doesn´t have reviews yet.</p>
       )}
     </div>
   )

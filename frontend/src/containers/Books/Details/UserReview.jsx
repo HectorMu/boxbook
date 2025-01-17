@@ -6,7 +6,6 @@ const UserReview = ({ book }) => {
   return (
     <>
       <div className="mt-3  border-purple mb-5">
-        <h2>Reviews</h2>
         <h5 className="mt-4">My review</h5>
         <div className="card py-2 px-5 mb-3">
           <div className="row g-0">
