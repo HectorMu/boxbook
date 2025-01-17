@@ -13,6 +13,7 @@ const Canvas = ({
       <button
         className={buttonClass}
         type="button"
+        style={{ textWrap: 'nowrap' }}
         data-bs-toggle="offcanvas"
         data-bs-target={`#${id}`}
         aria-controls={`id`}

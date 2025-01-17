@@ -74,11 +74,11 @@ const Details = () => {
                 onCatalogBook={catalogUserbook}
                 refresh={getBookInCatalog}
               />
-              <div className="mt-5">
-                <Reviews />
-              </div>
             </>
           )}
+          <div className="mt-5">
+            <Reviews />
+          </div>
         </div>
       )}
     </div>

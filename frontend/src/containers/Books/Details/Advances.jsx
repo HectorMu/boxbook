@@ -21,7 +21,6 @@ const Advances = ({ book, onCatalogBook, refresh }) => {
     commentary: ''
   }))
 
-  const [currentAdvance, setCurrentAdvance] = useState({})
   const [advancesHistory, setAdvancesHistory] = useState([])
 
   const [finishedReading, setFinishedReading] = useState(BookReadModel)
@@ -42,7 +41,6 @@ const Advances = ({ book, onCatalogBook, refresh }) => {
   const getAdvancesHistoryHandler = useCallback(async () => {
     const advances = await getAdvancesHistory(onCatalogBook.id)
     setAdvancesHistory(advances)
-    setCurrentAdvance(advances.at(0))
   }, [onCatalogBook.id])
 
   const handleSubmit = async (e) => {
@@ -81,6 +79,7 @@ const Advances = ({ book, onCatalogBook, refresh }) => {
     }
   }, [onCatalogBook])
 
+  if (advancesHistory.length === 0) return null
   return (
     <div className="mt-5 border-purple">
       <h5 className="mb-3">Advances history</h5>
@@ -114,89 +113,101 @@ const Advances = ({ book, onCatalogBook, refresh }) => {
                   </h6>
                 </h6>
                 {index === 0 && (
-                  <h6 className="d-flex gap-1 fw-bold">
-                    <FaBookOpen className="text-purple" />{' '}
-                    {advance?.pagesReaded}/{book?.pageCount} pages
-                  </h6>
+                  <div className="d-flex align-items-center gap-2">
+                    <h6 className="d-flex gap-1 fw-bold">
+                      <FaBookOpen className="text-purple" />{' '}
+                      {advance?.pagesReaded}/{book?.pageCount} pages
+                    </h6>
+                    {onCatalogBook.status !== 'Read' && (
+                      <Canvas
+                        buttonClass="btn btn-purple btn-sm"
+                        title="Adding new advance"
+                        id="advancesCanvas"
+                        buttonText="New advance"
+                        icon={<FaPlus />}
+                      >
+                        <p className="mb-3">
+                          Current page: {advance?.pagesReaded}
+                        </p>
+                        {newAdvance?.pagesReaded === book?.pageCount ? (
+                          <div>
+                            <div className="my-4 text-start">
+                              Looks like you finshed this book, this final
+                              commentary will count as the book final review and
+                              the book status will be changed to read.
+                            </div>
+                            <h5 className="text-center pt-3">Rate this book</h5>
+                            <div className="d-flex justify-content-center mb-4">
+                              {rateStars.map((el, i) => (
+                                <button
+                                  type="button"
+                                  key={el}
+                                  onMouseOver={() => setOnRating(i + 1)}
+                                  onMouseLeave={() => setOnRating(rated)}
+                                  onClick={() => ratingHandlers(i)}
+                                  className={`btn btn-sm btn-star ${
+                                    rated >= i + 1
+                                      ? `rated`
+                                      : `${
+                                          onRating >= i + 1
+                                            ? `text-purple-light`
+                                            : ''
+                                        } `
+                                  } `}
+                                >
+                                  <FaStar className="responsive-font" />
+                                </button>
+                              ))}
+                            </div>
+                          </div>
+                        ) : null}
+                        <form onSubmit={handleSubmit}>
+                          <FloatingLabelInput
+                            type="number"
+                            inputId="txtPages"
+                            placeholder="Page number"
+                            setValue={(e) =>
+                              handleChange(
+                                'pagesReaded',
+                                parseInt(e.target.value)
+                              )
+                            }
+                            value={newAdvance.pagesReaded}
+                          />
+                          <textarea
+                            placeholder="Commentary"
+                            rows="5"
+                            className="form-control"
+                            onChange={
+                              newAdvance?.pagesReaded >= book?.pageCount
+                                ? (e) =>
+                                    handleChangeFinishedReading(
+                                      'review',
+                                      e.target.value
+                                    )
+                                : (e) =>
+                                    handleChange('commentary', e.target.value)
+                            }
+                            value={
+                              newAdvance?.pagesReaded >= book?.pageCount
+                                ? finishedReading.review
+                                : newAdvance.commentary
+                            }
+                          ></textarea>
+                          <div className="d-flex justify-content-center mt-3">
+                            <button
+                              type="submit"
+                              className="btn btn-purple btn-sm"
+                            >
+                              Save
+                            </button>
+                          </div>
+                        </form>
+                      </Canvas>
+                    )}
+                  </div>
                 )}
               </div>
-
-              {index === 0 && onCatalogBook.status !== 'Read' && (
-                <Canvas
-                  buttonClass="btn btn-purple btn-sm"
-                  title="Adding new advance"
-                  id="advancesCanvas"
-                  buttonText="New advance"
-                  icon={<FaPlus />}
-                >
-                  <p className="mb-3">Current page: {advance?.pagesReaded}</p>
-                  {newAdvance?.pagesReaded === book?.pageCount ? (
-                    <div>
-                      <div className="my-4 text-start">
-                        Looks like you finshed this book, this final commentary
-                        will count as the book final review and the book status
-                        will be changed to read.
-                      </div>
-                      <h5 className="text-center pt-3">Rate this book</h5>
-                      <div className="d-flex justify-content-center mb-4">
-                        {rateStars.map((el, i) => (
-                          <button
-                            type="button"
-                            key={el}
-                            onMouseOver={() => setOnRating(i + 1)}
-                            onMouseLeave={() => setOnRating(rated)}
-                            onClick={() => ratingHandlers(i)}
-                            className={`btn btn-sm btn-star ${
-                              rated >= i + 1
-                                ? `rated`
-                                : `${
-                                    onRating >= i + 1 ? `text-purple-light` : ''
-                                  } `
-                            } `}
-                          >
-                            <FaStar className="responsive-font" />
-                          </button>
-                        ))}
-                      </div>
-                    </div>
-                  ) : null}
-                  <form onSubmit={handleSubmit}>
-                    <FloatingLabelInput
-                      type="number"
-                      inputId="txtPages"
-                      placeholder="Page number"
-                      setValue={(e) =>
-                        handleChange('pagesReaded', parseInt(e.target.value))
-                      }
-                      value={newAdvance.pagesReaded}
-                    />
-                    <textarea
-                      placeholder="Commentary"
-                      rows="5"
-                      className="form-control"
-                      onChange={
-                        newAdvance?.pagesReaded >= book?.pageCount
-                          ? (e) =>
-                              handleChangeFinishedReading(
-                                'review',
-                                e.target.value
-                              )
-                          : (e) => handleChange('commentary', e.target.value)
-                      }
-                      value={
-                        newAdvance?.pagesReaded >= book?.pageCount
-                          ? finishedReading.review
-                          : newAdvance.commentary
-                      }
-                    ></textarea>
-                    <div className="d-flex justify-content-center mt-3">
-                      <button type="submit" className="btn btn-purple btn-sm">
-                        Save
-                      </button>
-                    </div>
-                  </form>
-                </Canvas>
-              )}
             </div>
             <div className="d-flex flex-column">
               <p>
