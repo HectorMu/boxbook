@@ -8,6 +8,7 @@ const Reviews = () => {
   const [reviews, setReviews] = useState([])
 
   const getReviewsHandler = useCallback(async () => {
+    if (!title) return
     const fetchedReviews = await getBookReviews(title)
     setReviews(fetchedReviews)
   }, [title])

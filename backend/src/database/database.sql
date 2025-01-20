@@ -65,6 +65,7 @@ CREATE TABLE IF NOT EXISTS `userbooks` (
   `score` int(11) DEFAULT NULL,
   `review` varchar(255) DEFAULT NULL,
   `reviewDate` varchar(2000) DEFAULT NULL,
+  `googleBookId` varchar(100) DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `fk_user` (`fk_user`),
   CONSTRAINT `userbooks_ibfk_1` FOREIGN KEY (`fk_user`) REFERENCES `users` (`id`)

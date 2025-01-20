@@ -18,11 +18,14 @@ const Details = () => {
   const { id } = useParams()
 
   const getBookInCatalog = useCallback(async () => {
+    if (!id) return
     setIsLoading(true)
     const foundUserBook = await checkBookInCatalog(id)
     setUserCatalogBook(foundUserBook)
     setIsLoading(false)
   }, [id])
+
+  console.log(catalogUserbook)
 
   useEffect(() => {
     const getGoogleBookData = async () => {
