@@ -1,11 +1,12 @@
 const connection = require('../database')
+const { prisma } = require('../prisma')
 
 const controller = {}
 
 controller.ListAll = async (req, res) => {
   try {
-    const users = await connection.query('select * from users')
-    res.json(users)
+    const users = await prisma.user.findMany()
+    return res.json(users)
   } catch (error) {
     res
       .status(200)
@@ -15,11 +16,11 @@ controller.ListAll = async (req, res) => {
 
 controller.ListCatalog = async (req, res) => {
   try {
-    const catalog = await connection.query(
-      'select * from userbooks where fk_user = ?',
-      [req.params.id]
-    )
-    res.json(catalog)
+    const catalog = await prisma.userBook.findMany({
+      where: { fk_user: req.params.id }
+    })
+
+    return res.json(catalog)
   } catch (error) {
     res
       .status(200)
@@ -31,27 +32,55 @@ controller.acceptFriend = async (req, res) => {
   const { sender } = req.body
 
   const solitudeToAccept = {
-    sender: req.user.id,
-    receiver: sender,
+    sender: Number(req.user.id),
+    receiver: Number(sender),
     status: 'Friends'
   }
 
   try {
-    const results = await connection.query(
-      'select * from friendship where sender = ? && receiver = ?',
-      [sender, req.user.id]
-    )
-    if (results.length > 0) {
-      await connection.query('insert into friendship set ?', [solitudeToAccept])
-      await connection.query(
-        "update friendship set status = 'Friends' where sender  = ? && receiver = ? || receiver = ? && sender = ? ",
-        [sender, req.user.id, req.user.id, sender]
-      )
+    const results = await prisma.friendship.findFirst({
+      where: { sender: Number(sender), receiver: Number(req.user.id) }
+    })
+
+    if (results) {
+      await prisma.friendship.create({ data: solitudeToAccept })
+
+      await prisma.friendship.updateMany({
+        where: {
+          OR: [
+            {
+              sender: Number(sender),
+              receiver: Number(req.user.id)
+            },
+            {
+              sender: Number(req.user.id),
+              receiver: Number(sender)
+            }
+          ]
+        },
+        data: {
+          status: 'Friends'
+        }
+      })
     }
-    await connection.query(
-      "update friendship set status = 'Friends' where sender  = ? && receiver = ? || receiver = ? && sender = ? ",
-      [sender, req.user.id, req.user.id, sender]
-    )
+
+    await prisma.friendship.updateMany({
+      where: {
+        OR: [
+          {
+            sender: Number(sender),
+            receiver: Number(req.user.id)
+          },
+          {
+            sender: Number(req.user.id),
+            receiver: Number(sender)
+          }
+        ]
+      },
+      data: {
+        status: 'Friends'
+      }
+    })
     res.json({ status: true, statusText: 'Solitude accepted!' })
   } catch (error) {
     console.log(error)
@@ -64,232 +93,272 @@ controller.acceptFriend = async (req, res) => {
 controller.addAsFriend = async (req, res) => {
   const { receiver } = req.body
 
-  const newSolitude = {
-    sender: req.user.id,
-    receiver,
-    status: 'Pending'
-  }
-
   try {
-    const results = await connection.query(
-      'select * from friendship where sender = ? &&  receiver = ?',
-      [req.user.id, receiver]
-    )
-    if (!results.length > 0) {
-      await connection.query('insert into friendship set ?', [newSolitude])
+    const existingFriendship = await prisma.friendship.findFirst({
+      where: {
+        sender: Number(req.user.id),
+        receiver: Number(receiver)
+      }
+    })
+
+    if (!existingFriendship) {
+      await prisma.friendship.create({
+        data: {
+          sender: Number(req.user.id),
+          receiver: Number(receiver),
+          status: 'Pending'
+        }
+      })
     }
 
     res.json({ status: true, statusText: 'Added as a friend!' })
   } catch (error) {
-    console.log(error)
-    res
-      .status(200)
-      .json({ status: false, statusText: "Something wen't wrong." })
+    console.error(error)
+    res.status(500).json({ status: false, statusText: 'Something went wrong.' })
   }
 }
 
 controller.removeFriend = async (req, res) => {
   const { receiver } = req.params
-
   const sender = req.user.id
 
-  console.log(receiver)
   try {
-    await connection.query(
-      'delete from friendship where sender  = ? || receiver = ?',
-      [sender, sender]
-    )
-    await connection.query(
-      'delete from friendship where receiver  = ? || sender = ?',
-      [receiver, receiver]
-    )
+    await prisma.friendship.deleteMany({
+      where: {
+        OR: [
+          { sender: Number(sender), receiver: Number(receiver) },
+          { sender: Number(receiver), receiver: Number(sender) }
+        ]
+      }
+    })
+
     res.json({ status: true, statusText: 'Removed as a friend!' })
   } catch (error) {
-    console.log(error)
-    res
-      .status(200)
-      .json({ status: false, statusText: "Something wen't wrong." })
+    console.error(error)
+    res.status(500).json({ status: false, statusText: 'Something went wrong.' })
   }
 }
+
 controller.ListSameLocation = async (req, res) => {
   try {
-    const FindCurrentUser = await connection.query(
-      'select * from users where id = ?',
-      [req.user.id]
-    )
-    const AllUsers = await connection.query(
-      'select * from users where id != ?',
-      req.user.id
-    )
+    const currentUser = await prisma.user.findFirst({
+      where: { id: Number(req.user.id) }
+    })
 
-    const filterOnLocation = AllUsers.filter(
-      (user) =>
-        user.country === FindCurrentUser[0].country &&
-        user.city === FindCurrentUser[0].city
-    )
+    const users = await prisma.user.findMany({
+      where: {
+        id: { not: req.user.id },
+        country: currentUser.country,
+        city: currentUser.city
+      },
+      select: {
+        id: true,
+        username: true,
+        fullname: true,
+        email: true,
+        booksReaded: true
+      }
+    })
 
-    const users = filterOnLocation.map(
-      ({ id, username, fullname, email, booksReaded }) => ({
-        id,
-        username,
-        fullname,
-        email,
-        booksReaded
-      })
-    )
     res.json(users)
   } catch (error) {
-    console.log(error)
-    res
-      .status(200)
-      .json({ status: false, statusText: "Something wen't wrong." })
+    console.error(error)
+    res.status(500).json({ status: false, statusText: 'Something went wrong.' })
   }
 }
+
 controller.ListOne = async (req, res) => {
   const { id } = req.params
+
   try {
-    const results = await connection.query('select * from users where id = ?', [
-      id
-    ])
-    const FindedUser = results[0]
-
-    const { fullname, username, email, booksReaded, country, city } = FindedUser
-
-    res.json({
-      fullname,
-      username,
-      email,
-      country,
-      city,
-      booksReaded
+    const user = await prisma.user.findFirst({
+      where: { id: Number(id) },
+      select: {
+        fullname: true,
+        username: true,
+        email: true,
+        country: true,
+        city: true,
+        booksReaded: true
+      }
     })
+
+    res.json(user)
   } catch (error) {
-    console.log(error)
-    res
-      .status(200)
-      .json({ status: false, statusText: "Something wen't wrong." })
+    console.error(error)
+    res.status(500).json({ status: false, statusText: 'Something went wrong.' })
   }
 }
 
 controller.getFriendSolitudes = async (req, res) => {
   try {
-    const solitudes = await connection.query(
-      'SELECT * FROM view_receivernotifications where receiver = ?',
-      [req.user.id]
-    )
+    const solitudes = await prisma.friendship.findMany({
+      where: { receiver: Number(req.user.id) },
+      select: {
+        Sender: { omit: { password: true } },
+        id: true,
+        Receiver: { omit: { password: true } },
+        status: true
+      }
+    })
+
     res.json(solitudes)
   } catch (error) {
-    console.log(error)
-    res
-      .status(200)
-      .json({ status: false, statusText: "Something wen't wrong." })
+    console.error(error)
+    res.status(500).json({ status: false, statusText: 'Something went wrong.' })
   }
 }
 
 controller.GetFrienshipSender = async (req, res) => {
   const { currentId } = req.body
+
   try {
-    const results = await connection.query(
-      'select * from friendship where sender = ? && receiver = ?',
-      [req.user.id, currentId]
-    )
-    console.log(results)
-    const friendship = results[0]
+    const friendship = await prisma.friendship.findFirst({
+      where: {
+        sender: Number(req.user.id),
+        receiver: Number(currentId)
+      }
+    })
+
     res.json(friendship)
   } catch (error) {
-    console.log(error)
-    res
-      .status(200)
-      .json({ status: false, statusText: "Something wen't wrong." })
+    console.error(error)
+    res.status(500).json({ status: false, statusText: 'Something went wrong.' })
   }
 }
 
 controller.GetFrienshipReceiver = async (req, res) => {
   const { currentId } = req.body
+
   try {
-    const results = await connection.query(
-      'select * from friendship where sender = ? && receiver = ? ',
-      [currentId, req.user.id]
-    )
-    console.log(results)
-    const friendship = results[0]
+    const friendship = await prisma.friendship.findFirst({
+      where: {
+        sender: Number(currentId),
+        receiver: Number(req.user.id)
+      }
+    })
+
     res.json(friendship)
   } catch (error) {
-    console.log(error)
-    res
-      .status(200)
-      .json({ status: false, statusText: "Something wen't wrong." })
+    console.error(error)
+    res.status(500).json({ status: false, statusText: 'Something went wrong.' })
   }
 }
 
 controller.getUserCommentary = async (req, res) => {
   try {
-    const results = await connection.query(
-      'select * from userscatalogcommentaries where fk_visitor = ? && fk_usercatalog = ?',
-      [req.user.id, req.params.user_catalog]
-    )
+    const commentary = await prisma.userCatalogCommentary.findFirst({
+      where: {
+        fk_visitor: Number(req.user.id),
+        fk_usercatalog: Number(req.params.user_catalog)
+      }
+    })
 
-    if (!results.length > 0) {
+    if (!commentary) {
       return res
         .status(200)
         .json({ status: false, statusText: 'No commentaries' })
     }
-    const commentary = results[0]
+
     res.json(commentary)
   } catch (error) {
-    console.log(error)
-    res
-      .status(200)
-      .json({ status: false, statusText: "Something wen't wrong." })
+    console.error(error)
+    res.status(500).json({ status: false, statusText: 'Something went wrong.' })
   }
 }
 
 controller.getCommentaries = async (req, res) => {
   try {
-    const commentaries = await connection.query(
-      ' SELECT  * FROM view_catalogcommentaries WHERE fk_usercatalog = ? && fk_visitor != ?',
-      [req.params.user_catalog, req.user.id]
-    )
+    const commentaries = await prisma.userCatalogCommentary.findMany({
+      where: {
+        fk_usercatalog: Number(req.params.user_catalog),
+        fk_visitor: { not: Number(req.user.id) }
+      }
+    })
+
     res.json(commentaries)
   } catch (error) {
-    console.log(error)
-    res
-      .status(200)
-      .json({ status: false, statusText: "Something wen't wrong." })
+    console.error(error)
+    res.status(500).json({ status: false, statusText: 'Something went wrong.' })
   }
 }
 
 controller.SaveCatalogCommentary = async (req, res) => {
   const commentary = {
-    fk_visitor: req.user.id,
-    fk_usercatalog: req.params.user_catalog,
+    fk_visitor: Number(req.user.id),
+    fk_usercatalog: Number(req.params.user_catalog),
     ...req.body
   }
+
   try {
-    await connection.query('insert into userscatalogcommentaries set ?', [
-      commentary
-    ])
+    await prisma.userCatalogCommentary.create({
+      data: commentary
+    })
+
     res.json({ status: true, statusText: 'Commentary added' })
   } catch (error) {
-    console.log(error)
-    res
-      .status(200)
-      .json({ status: false, statusText: "Something wen't wrong." })
+    console.error(error)
+    res.status(500).json({ status: false, statusText: 'Something went wrong.' })
   }
 }
 
 controller.RemoveCommentary = async (req, res) => {
   try {
-    await connection.query(
-      'delete from userscatalogcommentaries where id = ?',
-      [req.params.id]
-    )
+    // Delete commentary using Prisma
+    await prisma.userCatalogCommentary.delete({
+      where: { id: parseInt(req.params.id) }
+    })
+    res.json({ status: true, statusText: 'Commentary removed' })
+  } catch (error) {
+    console.error(error)
+    res.status(500).json({ status: false, statusText: 'Something went wrong.' })
+  }
+}
+
+controller.getCommentaries = async (req, res) => {
+  try {
+    // Fetch commentaries using Prisma with custom filtering
+    const commentaries = await prisma.userCatalogCommentary.findMany({
+      where: {
+        fk_usercatalog: parseInt(req.params.user_catalog),
+        fk_visitor: { not: Number(req.user.id) }
+      }
+    })
+    res.json(commentaries)
+  } catch (error) {
+    console.log(error)
+    res.status(500).json({ status: false, statusText: 'Something went wrong.' })
+  }
+}
+
+controller.SaveCatalogCommentary = async (req, res) => {
+  const commentary = {
+    fk_visitor: Number(req.user.id),
+    fk_usercatalog: parseInt(req.params.user_catalog),
+    ...req.body
+  }
+  try {
+    // Add new commentary using Prisma
+    await prisma.userCatalogCommentary.create({
+      data: commentary
+    })
+    res.json({ status: true, statusText: 'Commentary added' })
+  } catch (error) {
+    console.log(error)
+    res.status(500).json({ status: false, statusText: 'Something went wrong.' })
+  }
+}
+
+controller.RemoveCommentary = async (req, res) => {
+  try {
+    // Delete commentary using Prisma
+    await prisma.userCatalogCommentary.delete({
+      where: { id: parseInt(req.params.id) }
+    })
     res.json({ status: true, statusText: 'Commentary removed' })
   } catch (error) {
     console.log(error)
-    res
-      .status(200)
-      .json({ status: false, statusText: "Something wen't wrong." })
+    res.status(500).json({ status: false, statusText: 'Something went wrong.' })
   }
 }
 

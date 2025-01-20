@@ -66,7 +66,7 @@ const NotificationsDropdown = () => {
                         className="text-muted"
                         style={{ fontSize: '13px', margin: '0px' }}
                       >
-                        From: {notification.username}
+                        From: {notification.Sender.username}
                       </p>
                     </Link>
                   </div>

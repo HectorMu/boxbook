@@ -1,0 +1,81 @@
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["driverAdapters"]
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+model User {
+  id                          Int                     @id @default(autoincrement())
+  username                    String?
+  fullname                    String?
+  email                       String                  @unique
+  password                    String
+  country                     String
+  city                        String
+  yearlyGoal                  Int                     @default(0)
+  booksReaded                 Int                     @default(0)
+  UserBook                    UserBook[]
+  Sockets                     Sockets[]
+  sentRequests                Friendship[]            @relation("SenderRelation")
+  receivedRequests            Friendship[]            @relation("ReceiverRelation")
+  UserBookAdvance             UserBookAdvance[]
+  givenCatalogCommentaries    UserCatalogCommentary[] @relation("VisitorRelation")
+  receivedCatalogCommentaries UserCatalogCommentary[] @relation("HostRelation")
+}
+
+model UserBook {
+  id              Int               @id @default(autoincrement())
+  fk_user         Int
+  author          String?
+  title           String?
+  pageCount       Int
+  thumbnail       String
+  publisher       String
+  publishedDate   String
+  review          String
+  reviewDate      String
+  googleBookId    String
+  score           Int
+  status          String
+  User            User              @relation(fields: [fk_user], references: [id])
+  UserBookAdvance UserBookAdvance[]
+}
+
+model Sockets {
+  id             Int    @id @default(autoincrement())
+  fk_user        Int
+  User           User   @relation(fields: [fk_user], references: [id])
+  current_socket String
+}
+
+model Friendship {
+  id       Int    @id @default(autoincrement())
+  sender   Int
+  receiver Int
+  Sender   User   @relation("SenderRelation", fields: [sender], references: [id])
+  Receiver User   @relation("ReceiverRelation", fields: [receiver], references: [id])
+  status   String
+}
+
+model UserBookAdvance {
+  id          Int      @id @default(autoincrement())
+  fk_user     Int
+  User        User     @relation(fields: [fk_user], references: [id])
+  fk_book     Int
+  Book        UserBook @relation(fields: [fk_book], references: [id])
+  pagesReaded Int
+  commentary  String
+}
+
+model UserCatalogCommentary {
+  id             Int    @id @default(autoincrement())
+  fk_visitor     Int
+  fk_usercatalog Int
+  commentary     String
+  Visitor        User   @relation("VisitorRelation", fields: [fk_visitor], references: [id])
+  Host           User   @relation("HostRelation", fields: [fk_usercatalog], references: [id])
+}

@@ -10,6 +10,7 @@ const jwt = require('jsonwebtoken')
 
 //Initialazing database connection
 const db = require('./database')
+const { prisma } = require('./prisma')
 
 //Using middlewares
 app.use(cors())
@@ -45,7 +46,6 @@ const io = new Server(server, {
 io.on('connection', (socket) => {
   socket.on('subscription', async (user) => {
     const userData = JSON.parse(user)
-
     const token = userData.AccessToken
 
     const decodedAccessToken = jwt.verify(
@@ -54,67 +54,89 @@ io.on('connection', (socket) => {
     )
 
     const decodedUser = decodedAccessToken
-    const hasAlreayRegistered = await db.query(
-      'select * from sockets where fk_user = ?',
-      [decodedUser.id]
-    )
-
-    if (hasAlreayRegistered.length > 0) {
-      await db.query(
-        'update sockets set current_socket = ? where fk_user = ?',
-        [socket.id, decodedUser.id]
-      )
-    } else {
-      const newSocket = {
-        fk_user: decodedUser.id,
-        current_socket: socket.id
+    const hasAlreadyRegistered = await prisma.sockets.findFirst({
+      where: {
+        fk_user: Number(decodedUser.id)
       }
+    })
 
-      await db.query('insert into sockets set ?', [newSocket])
+    if (hasAlreadyRegistered) {
+      await prisma.sockets.update({
+        where: {
+          id: hasAlreadyRegistered.id,
+          fk_user: Number(decodedUser.id)
+        },
+        data: {
+          current_socket: socket.id
+        }
+      })
+    } else {
+      await prisma.sockets.create({
+        data: {
+          fk_user: Number(decodedUser.id),
+          current_socket: socket.id
+        }
+      })
     }
   })
 
   socket.on('add-friend', async (to) => {
-    const getSocketId = await db.query(
-      'select * from sockets where fk_user = ?',
-      [to]
-    )
-    const socketId = getSocketId?.[0]?.current_socket
+    const getSocketId = await prisma.sockets.findFirst({
+      where: {
+        fk_user: Number(to)
+      }
+    })
+    const socketId = getSocketId?.current_socket
 
     if (socketId) {
       io.to(socketId).emit('friend-request')
     }
   })
-  socket.on('accepted-request', async (payload) => {
-    const getReceiverSocketId = await db.query(
-      'select * from sockets where fk_user = ?',
-      [payload.receiver]
-    )
-    const receiverSocketId = getReceiverSocketId[0].current_socket
 
-    const getSenderSocketId = await db.query(
-      'select * from sockets where fk_user = ?',
-      [payload.sender]
-    )
-    const senderSocketId = getSenderSocketId[0].current_socket
-    io.to(receiverSocketId).emit('refresh-notifications')
-    io.to(senderSocketId).emit('solitude-accepted', payload.username)
+  socket.on('accepted-request', async (payload) => {
+    const getReceiverSocketId = await prisma.sockets.findFirst({
+      where: {
+        fk_user: Number(payload.receiver)
+      }
+    })
+    const receiverSocketId = getReceiverSocketId?.current_socket
+
+    const getSenderSocketId = await prisma.sockets.findFirst({
+      where: {
+        fk_user: Number(payload.sender)
+      }
+    })
+    const senderSocketId = getSenderSocketId?.current_socket
+
+    if (receiverSocketId) {
+      io.to(receiverSocketId).emit('refresh-notifications')
+    }
+    if (senderSocketId) {
+      io.to(senderSocketId).emit('solitude-accepted', payload.username)
+    }
   })
 
   socket.on('deleted-request', async (payload) => {
-    const getReceiverSocketId = await db.query(
-      'select * from sockets where fk_user = ?',
-      [payload.receiver]
-    )
-    const receiverSocketId = getReceiverSocketId[0].current_socket
+    const getReceiverSocketId = await prisma.sockets.findFirst({
+      where: {
+        fk_user: Number(payload.receiver)
+      }
+    })
+    const receiverSocketId = getReceiverSocketId?.current_socket
 
-    const getSenderSocketId = await db.query(
-      'select * from sockets where fk_user = ?',
-      [payload.sender]
-    )
-    const senderSocketId = getSenderSocketId[0].current_socket
-    io.to(receiverSocketId).emit('refresh-notifications')
-    io.to(senderSocketId).emit('solitude-deleted', payload.username)
+    const getSenderSocketId = await prisma.sockets.findFirst({
+      where: {
+        fk_user: Number(payload.sender)
+      }
+    })
+    const senderSocketId = getSenderSocketId?.current_socket
+
+    if (receiverSocketId) {
+      io.to(receiverSocketId).emit('refresh-notifications')
+    }
+    if (senderSocketId) {
+      io.to(senderSocketId).emit('solitude-deleted', payload.username)
+    }
   })
 })
 

@@ -142,7 +142,7 @@ const UserProfile = () => {
 
   return (
     <div className="container py-5">
-      {friendshipReceiver && (
+      {friendshipReceiver && friendshipReceiver.status === 'Pending' && (
         <h5>{profile.username} sent you a friend request</h5>
       )}
       <div className="row  d-flex align-items-center">
@@ -195,9 +195,11 @@ const UserProfile = () => {
                     {friendshipSender && friendshipReceiver && (
                       <button
                         onClick={removeAsFriendHandler}
+                        onMouseLeave={() => setIsPendingHovered(false)}
+                        onMouseEnter={() => setIsPendingHovered(true)}
                         className="btn btn-purple btn-sm"
                       >
-                        Friends
+                        {isPendingHovered ? 'Remove' : 'Friend'}
                       </button>
                     )}
                   </h5>

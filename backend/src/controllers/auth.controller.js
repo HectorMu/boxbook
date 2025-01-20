@@ -3,22 +3,20 @@ const jwt = require('jsonwebtoken')
 const helpers = require('../helpers/helpers')
 const nodeMailer = require('../lib/nodemailer')
 const { validateEmail } = require('../helpers/helpers')
+const { prisma } = require('../prisma')
 const controller = {}
 
 controller.Login = async (req, res) => {
   const { email, password } = req.body
   try {
-    const results = await connection.query(
-      `select * from users where email = ? `,
-      [email]
-    )
-    if (!results.length > 0)
+    const user = await prisma.user.findFirst({ where: { email } })
+
+    if (!user)
       return res.status(400).json({
         status: false,
         statusText: 'Wrong credentials, check it out.'
       })
 
-    const user = results[0]
     const passwordComparationResult = await helpers.matchPassword(
       password,
       user.password
@@ -44,14 +42,14 @@ controller.Login = async (req, res) => {
       AccessToken
     }
 
-    res.status(200).json({
+    return res.status(200).json({
       status: true,
       statusText: 'Welcome',
       SessionData
     })
   } catch (error) {
     console.log(error)
-    res
+    return res
       .status(200)
       .json({ status: false, statusText: "Something wen't wrong." })
   }
@@ -59,20 +57,21 @@ controller.Login = async (req, res) => {
 
 controller.Signup = async (req, res) => {
   try {
-    const results = await connection.query(
-      `select * from users where email = ? `,
-      [req.body.email]
-    )
-    if (results.length > 0)
-      return res.json({
-        status: false,
-        statusText: 'An account is using this email already, try another email.'
-      })
-
     if (!validateEmail(req.body.email)) {
       return res
         .status(200)
         .json({ status: false, statusText: 'Provide a valid email' })
+    }
+
+    const user = await prisma.user.findFirst({
+      where: { email: req.body.email }
+    })
+
+    if (user) {
+      return res.json({
+        status: false,
+        statusText: 'An account is using this email already, try another email.'
+      })
     }
 
     const newUser = {
@@ -82,7 +81,7 @@ controller.Signup = async (req, res) => {
     }
 
     newUser.password = await helpers.encryptPassword(newUser.password)
-    await connection.query('insert into users set ?', [newUser])
+    await prisma.user.create({ data: { ...newUser } })
     res.status(200).json({
       status: true,
       statusText: 'Registered, now Log in to continue!'
@@ -101,14 +100,16 @@ controller.sendRecoverEmail = async (req, res) => {
     'select * from users where email = ?',
     [email]
   )
-  if (results.length > 0) {
-    nodeMailer.Send(req, res)
-  } else {
-    res.status(200).json({
+  const user = await prisma.user.findFirst({ where: { email } })
+
+  if (!user) {
+    return res.status(200).json({
       status: false,
       statusText: 'Provided email invalid, no existing account with this email.'
     })
   }
+
+  nodeMailer.Send(req, res)
 }
 controller.VerifyRecoverEmailToken = (req, res) => {
   const { ResetToken } = req.params
@@ -161,10 +162,10 @@ controller.ResetPassword = async (req, res) => {
 
     const hashedPassword = await helpers.encryptPassword(password)
 
-    await connection.query('update users set password = ? where id = ?', [
-      hashedPassword,
-      id
-    ])
+    await prisma.user.update({
+      data: { password: hashedPassword },
+      where: { id }
+    })
 
     res.status(200).json({ status: true, statusText: 'Password changed' })
   } catch (error) {
