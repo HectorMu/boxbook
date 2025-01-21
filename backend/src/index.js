@@ -26,7 +26,7 @@ app.use(require('./routes/social.routes'))
 
 //To deploy a react router app build with an express server, this must be here forever
 app.use(express.static(path.join(__dirname, 'build')))
-app.use('/*', (req, res) => {
+app.get('/*', (req, res) => {
   res.sendFile(path.join(__dirname, 'build/index.html'), (err) => {
     if (err) {
       res.status(500).send('error')
