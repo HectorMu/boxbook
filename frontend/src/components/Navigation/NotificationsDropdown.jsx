@@ -10,7 +10,7 @@ const NotificationsDropdown = () => {
 
   const getNotificationsHandler = async () => {
     const fetchedNotifications = await getSolitudes()
-    setNotifications(fetchedNotifications)
+    setNotifications(fetchedNotifications ?? [])
   }
 
   useEffect(() => {

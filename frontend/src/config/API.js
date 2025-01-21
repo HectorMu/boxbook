@@ -6,6 +6,8 @@ const calulcateBaseURl = () => {
   return import.meta.env.VITE_API_BASE_URL || 'http://localhost:4000/api'
 }
 
-const baseUrl = calulcateBaseURl()
+export const baseUrl = calulcateBaseURl()
 
-export default baseUrl
+const API = baseUrl + '/api'
+
+export default API
