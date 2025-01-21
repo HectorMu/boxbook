@@ -10,11 +10,11 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build:app": "npm run build --workspace=frontend",
+    "build": "npm run build --workspace=frontend",
     "start:app": "npm run dev --workspace=frontend",
     "start:api": "npm run dev --workspace=backend",
     "dev": "start npm run start:api && start npm run start:app",
-    "start": "npm run build:app && npm run start:api"
+    "start": "npm run build && npm run start:api"
   },
   "keywords": [],
   "author": "",
