@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "npx prisma generate && node src/index.js",
+    "start": "prisma generate && node src/index.js",
     "dev": "nodemon src/index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -23,6 +23,7 @@
     "morgan": "^1.10.0",
     "mysql": "^2.18.1",
     "nodemailer": "^6.7.2",
+    "prisma": "^6.2.1",
     "socket.io": "^4.8.1"
   },
   "devDependencies": {
