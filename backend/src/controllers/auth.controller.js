@@ -1,4 +1,3 @@
-const connection = require('../database')
 const jwt = require('jsonwebtoken')
 const helpers = require('../helpers/helpers')
 const nodeMailer = require('../lib/nodemailer')
@@ -94,23 +93,23 @@ controller.Signup = async (req, res) => {
   }
 }
 
-controller.sendRecoverEmail = async (req, res) => {
-  const { email } = req.body
-  const results = await connection.query(
-    'select * from users where email = ?',
-    [email]
-  )
-  const user = await prisma.user.findFirst({ where: { email } })
+// controller.sendRecoverEmail = async (req, res) => {
+//   const { email } = req.body
+//   const results = await connection.query(
+//     'select * from users where email = ?',
+//     [email]
+//   )
+//   const user = await prisma.user.findFirst({ where: { email } })
 
-  if (!user) {
-    return res.status(200).json({
-      status: false,
-      statusText: 'Provided email invalid, no existing account with this email.'
-    })
-  }
+//   if (!user) {
+//     return res.status(200).json({
+//       status: false,
+//       statusText: 'Provided email invalid, no existing account with this email.'
+//     })
+//   }
 
-  nodeMailer.Send(req, res)
-}
+//   nodeMailer.Send(req, res)
+// }
 controller.VerifyRecoverEmailToken = (req, res) => {
   const { ResetToken } = req.params
   try {

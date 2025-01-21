@@ -1,4 +1,3 @@
-const connection = require('../database')
 const { prisma } = require('../prisma')
 
 const controller = {}

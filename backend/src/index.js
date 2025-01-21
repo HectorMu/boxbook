@@ -9,7 +9,6 @@ const http = require('http')
 const jwt = require('jsonwebtoken')
 
 //Initialazing database connection
-const db = require('./database')
 const { prisma } = require('./prisma')
 
 //Using middlewares
