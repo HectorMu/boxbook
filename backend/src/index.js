@@ -24,16 +24,20 @@ app.use(require('./routes/user.routes'))
 app.use(require('./routes/userbooks.routes'))
 app.use(require('./routes/social.routes'))
 
-//To deploy a react router app build with an express server, this must be here forever
-app.use(express.static(path.join(__dirname, 'build')))
-app.get('/*', (req, res) => {
-  res.sendFile(path.join(__dirname, 'build/index.html'), (err) => {
-    if (err) {
-      res.status(500).send('error')
-      console.log(err)
-    }
-  })
+app.get('/test', (req, res) => {
+  res.send('Working')
 })
+
+//To deploy a react router app build with an express server, this must be here forever
+// app.use(express.static(path.join(__dirname, 'build')))
+// app.get('/*', (req, res) => {
+//   res.sendFile(path.join(__dirname, 'build/index.html'), (err) => {
+//     if (err) {
+//       res.status(500).send('error')
+//       console.log(err)
+//     }
+//   })
+// })
 
 const server = http.createServer(app)
 const io = new Server(server, {
