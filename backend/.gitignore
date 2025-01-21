@@ -3,3 +3,7 @@
 .env
 
 .vercel
+
+prisma/
+prisma/schema.prisma
+node_modules/.prisma/
