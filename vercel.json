@@ -13,7 +13,7 @@
     },
     {
       "src": "/api/(.*)",
-      "dest": "/src/index.js"
+      "dest": "/backend/src/index.js"
     }
   ]
 }
