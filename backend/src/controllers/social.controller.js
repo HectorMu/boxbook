@@ -192,7 +192,7 @@ controller.ListOne = async (req, res) => {
 controller.getFriendSolitudes = async (req, res) => {
   try {
     const solitudes = await prisma.friendship.findMany({
-      where: { receiver: Number(req.user.id) },
+      where: { receiver: Number(req.user.id), status: 'Pending' },
       select: {
         Sender: { omit: { password: true } },
         id: true,
