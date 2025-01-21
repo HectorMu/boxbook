@@ -1,8 +1,9 @@
 const calulcateBaseURl = () => {
-  if (import.meta.env.MODE !== 'development') {
-    return '/api'
+  if (!import.meta.env.VITE_API_BASE_URL) {
+    throw new Error('Env var missing')
   }
-  return 'http://localhost:4000/api'
+
+  return import.meta.env.VITE_API_BASE_URL || 'http://localhost:4000/api'
 }
 
 const baseUrl = calulcateBaseURl()
