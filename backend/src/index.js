@@ -1,8 +1,8 @@
-require('dotenv').config()
+const path = require('path')
+require('dotenv').config({ path: path.resolve(__dirname, '../../.env') })
 const express = require('express')
 const cors = require('cors')
 const morgan = require('morgan')
-const path = require('path')
 const app = express()
 const { Server } = require('socket.io')
 const http = require('http')
@@ -29,15 +29,15 @@ app.get('/test', (req, res) => {
 })
 
 //To deploy a react router app build with an express server, this must be here forever
-// app.use(express.static(path.join(__dirname, 'build')))
-// app.get('/*', (req, res) => {
-//   res.sendFile(path.join(__dirname, 'build/index.html'), (err) => {
-//     if (err) {
-//       res.status(500).send('error')
-//       console.log(err)
-//     }
-//   })
-// })
+app.use(express.static(path.join(__dirname, 'build')))
+app.get('/*', (req, res) => {
+  res.sendFile(path.join(__dirname, 'build/index.html'), (err) => {
+    if (err) {
+      res.status(500).send('error')
+      console.log(err)
+    }
+  })
+})
 
 const server = http.createServer(app)
 const io = new Server(server, {

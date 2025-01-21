@@ -14,7 +14,8 @@
     "start:app": "npm run dev --workspace=frontend",
     "start:api": "npm run dev --workspace=backend",
     "dev": "start npm run start:api && start npm run start:app",
-    "start": "npm run build && npm run start:api"
+    "start": "npm run build && npm run start:api",
+    "postinstall": "prisma generate --workspace=backend"
   },
   "keywords": [],
   "author": "",
