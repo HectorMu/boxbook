@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import { useState, useEffect } from 'react'
 import { getSolitudes } from '../../services/user'
 import { Link } from 'react-router-dom'
 import useSession from '../../hooks/useSession'
@@ -56,7 +56,7 @@ const NotificationsDropdown = () => {
                   </div>
                   <div className="col-10">
                     <Link
-                      to={`/profile/${notification.sender}/${notification.username}`}
+                      to={`/profile/${notification.Sender.id}/${notification.Sender.username}`}
                       className="dropdown-item"
                     >
                       <p style={{ fontSize: '15px', margin: '0px' }}>
