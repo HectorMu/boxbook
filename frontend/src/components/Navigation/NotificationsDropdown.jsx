@@ -17,6 +17,7 @@ const NotificationsDropdown = () => {
     const fetchedNotifications = await getSolitudes()
     setNotifications(fetchedNotifications ?? [])
   }
+  console.log({ isVisible })
 
   useEffect(() => {
     if (!socket) {
@@ -33,10 +34,9 @@ const NotificationsDropdown = () => {
         intervalId = setInterval(tick, delay.current)
       }
 
-      if (isVisible) {
-        tick()
-        intervalId = setInterval(tick, delay.current)
-      }
+      intervalId = setInterval(isVisible ? tick : () => {}, delay.current)
+
+      tick()
 
       return () => clearInterval(intervalId)
     } else {
