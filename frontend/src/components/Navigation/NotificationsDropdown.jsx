@@ -33,9 +33,11 @@ const NotificationsDropdown = () => {
         intervalId = setInterval(tick, delay.current)
       }
 
-      intervalId = setInterval(isVisible ? tick : () => {}, delay.current)
+      if (isVisible) {
+        tick()
+        intervalId = setInterval(tick, delay.current)
+      }
 
-      getNotificationsHandler()
       return () => clearInterval(intervalId)
     } else {
       socket.on('friend-request', getNotificationsHandler)
