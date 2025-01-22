@@ -1,12 +1,17 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { getSolitudes } from '../../services/user'
 import { Link } from 'react-router-dom'
 import useSession from '../../hooks/useSession'
 import { FaBell, FaUser } from 'react-icons/fa'
+import { usePageVisibility } from '../../hooks/usePageVisibility'
 
+const BASE_DELAY = 1000
+const MAX_DELAY = 5000
 const NotificationsDropdown = () => {
   const { socket } = useSession() || {}
+  const isVisible = usePageVisibility()
   const [notifications, setNotifications] = useState([])
+  const delay = useRef(BASE_DELAY)
 
   const getNotificationsHandler = async () => {
     const fetchedNotifications = await getSolitudes()
@@ -15,14 +20,23 @@ const NotificationsDropdown = () => {
 
   useEffect(() => {
     if (!socket) {
-      let intervalId = setInterval(() => {
-        getNotificationsHandler()
-      }, 1000)
+      let intervalId
+
+      const tick = async () => {
+        try {
+          await getNotificationsHandler()
+          delay.current = BASE_DELAY
+        } catch {
+          delay.current = Math.min(delay.current * 2, MAX_DELAY)
+        }
+        clearInterval(intervalId)
+        intervalId = setInterval(tick, delay.current)
+      }
+
+      intervalId = setInterval(isVisible ? tick : () => {}, delay.current)
 
       getNotificationsHandler()
-      return () => {
-        clearInterval(intervalId)
-      }
+      return () => clearInterval(intervalId)
     } else {
       socket.on('friend-request', getNotificationsHandler)
       socket.on('refresh-notifications', getNotificationsHandler)
@@ -33,7 +47,7 @@ const NotificationsDropdown = () => {
         socket.off('refresh-notifications', getNotificationsHandler)
       }
     }
-  }, [socket])
+  }, [socket, isVisible])
 
   return (
     <div className="dropdown">
