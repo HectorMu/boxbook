@@ -14,11 +14,27 @@ const NotificationsDropdown = () => {
   }
 
   useEffect(() => {
-    socket.on('friend-request', getNotificationsHandler)
+    if (!socket) {
+      let intervalId = setInterval(() => {
+        getNotificationsHandler()
+      }, 1000)
 
-    socket.on('refresh-notifications', getNotificationsHandler)
-    getNotificationsHandler()
+      getNotificationsHandler()
+      return () => {
+        clearInterval(intervalId)
+      }
+    } else {
+      socket.on('friend-request', getNotificationsHandler)
+      socket.on('refresh-notifications', getNotificationsHandler)
+
+      return () => {
+        socket.off('friend-request', getNotificationsHandler)
+
+        socket.off('refresh-notifications', getNotificationsHandler)
+      }
+    }
   }, [socket])
+
   return (
     <div className="dropdown">
       {notifications.length > 0 ? (
