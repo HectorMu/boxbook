@@ -34,7 +34,7 @@
 ---
 
 ### Tech Stack  
-The app is a **monorepo**, integrating both backend and frontend functionality seamlessly.  
+The app is a **monorepo**, integrating both  backend (Node.js/Express.js) and frontend (React.js) functionality seamlessly.  
 
 ---
 
