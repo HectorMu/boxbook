@@ -82,7 +82,6 @@ The app is a **monorepo**, integrating both  backend (Node.js/Express.js) and fr
 
 ---
 
-### Adding a Friend  
 #### Modal for Setting a Yearly Reading Goal (Prompted on Login)  
 ![Yearly Goal Modal](https://user-images.githubusercontent.com/42363909/172765342-85685700-c118-4757-8531-4364f1139849.png)  
 
